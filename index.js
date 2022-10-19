@@ -11,7 +11,7 @@ let ctx
 
 const elems = {}
 
-;['toolbar', 'pantool', 'position', 'spinner', 'zoomin', 'zoomout'].forEach(name => elems[name] = document.getElementById(name))
+  ;['toolbar', 'pantool', 'position', 'spinner', 'zoomin', 'zoomout'].forEach(name => elems[name] = document.getElementById(name))
 
 const toolbarelems = [elems.pantool]
 
@@ -71,10 +71,10 @@ class View {
     //debugger;
     if (sizeW > sizeH) {
       tileSize = clamp(sizeH, 1, 100)
-      this.scrollX -= (this.width/tileSize - w)/2
+      this.scrollX -= (this.width / tileSize - w) / 2
     } else {
       tileSize = clamp(sizeW, 1, 100)
-      this.scrollY -= (this.height/tileSize - h)/2
+      this.scrollY -= (this.height / tileSize - h) / 2
     }
     this.zoomLevel = tileSize
     this.zoomBy(0)
@@ -132,12 +132,12 @@ class View {
     const visY = this.height / this.size
 
     if (imgwidth > this.width)
-      this.scrollX = clamp(this.scrollX, -visX/2, 1000 - visX/2)
+      this.scrollX = clamp(this.scrollX, -visX / 2, 1000 - visX / 2)
     else
       this.scrollX = clamp(this.scrollX, 500 - visX, 500)
 
     if (imgwidth > this.height)
-      this.scrollY = clamp(this.scrollY, -visX/2, 1000 - visY/2)
+      this.scrollY = clamp(this.scrollY, -visX / 2, 1000 - visY / 2)
     else
       this.scrollY = clamp(this.scrollY, 500 - visY, 500)
   }
@@ -159,14 +159,14 @@ class View {
 
   // given pixel x,y returns tile x,y
   screenToWorld(px, py) {
-    if (px == null) return {tx:null, ty:null}
+    if (px == null) return { tx: null, ty: null }
     // first, the top-left pixel of the screen is at |_ scroll * size _| px from origin
     px += Math.floor(this.scrollX * this.size)
     py += Math.floor(this.scrollY * this.size)
     // now we can simply divide and floor to find the tile
     const tx = Math.floor(px / this.size)
     const ty = Math.floor(py / this.size)
-    return {tx, ty}
+    return { tx, ty }
   }
 
   worldToScreen(tx, ty) {
@@ -211,11 +211,11 @@ elems.pantool.onclick = () => {
     const c = colors[i]
     elem.style.backgroundColor = `rgb(${c[0]}, ${c[1]}, ${c[2]})`
     elem.style.height = '30px'
-    ;(i => elem.onclick = () => {
-      setMode('paint')
-      brush = i
-      setEnabledElem(elem)
-    })(i)
+      ; (i => elem.onclick = () => {
+        setMode('paint')
+        brush = i
+        setEnabledElem(elem)
+      })(i)
 
     toolbarelems.push(elem)
     elems.toolbar.appendChild(elem)
@@ -234,7 +234,7 @@ elems.pantool.onclick = () => {
 })
 
 let needsDraw = false
-const view = new View(0, 0, {initialX: -10, initialY: -10, initialZoom: 10})
+const view = new View(0, 0, { initialX: -10, initialY: -10, initialZoom: 10 })
 view.resizeTo(window.innerWidth, window.innerHeight)
 // Zoom out to the whole image at first.
 //view.fit(1000, 1000, 0, 0)
@@ -243,7 +243,7 @@ window.onresize = () => view.resizeTo(window.innerWidth, window.innerHeight)
 
 const mouse = {}
 const updateMousePos = (e) => {
-  mouse.from = {tx: mouse.tx, ty: mouse.ty};
+  mouse.from = { tx: mouse.tx, ty: mouse.ty };
 
   if (e) {
     const oldX = mouse.x;
@@ -254,7 +254,7 @@ const updateMousePos = (e) => {
     mouse.dy = mouse.y - oldY
   }
 
-  const {tx, ty} = view.screenToWorld(mouse.x, mouse.y);
+  const { tx, ty } = view.screenToWorld(mouse.x, mouse.y);
 
   if (tx !== mouse.tx || ty !== mouse.ty) {
     mouse.tx = tx;
@@ -269,7 +269,7 @@ canvas.onmousedown = e => {
   updateMousePos(e)
 
   if (mode === 'paint') {
-    const {tx, ty} = mouse
+    const { tx, ty } = mouse
     if (tx < 0 || tx >= 1000 || ty < 0 || ty >= 1000) return
 
     const oldColor = imgctx.getImageData(tx, ty, 1, 1).data
@@ -292,7 +292,7 @@ canvas.onmousedown = e => {
         }
       }
       // updateTileOnDB(tx,ty,paintedColor)
-      writeTile(tx,ty,paintedColor)
+      writeTile(tx, ty, paintedColor)
       draw()
     }
   } else if (mode === 'pan') {
@@ -370,10 +370,10 @@ function draw() {
     needsDraw = false
 
     if (motion.has('zoomin')) {
-      view.zoomBy(0.2, {x:view.width/2, y:view.height/2})
+      view.zoomBy(0.2, { x: view.width / 2, y: view.height / 2 })
       draw()
     } else if (motion.has('zoomout')) {
-      view.zoomBy(-0.2, {x:view.width/2, y:view.height/2})
+      view.zoomBy(-0.2, { x: view.width / 2, y: view.height / 2 })
       draw()
     }
 
@@ -388,8 +388,8 @@ function draw() {
 
     ctx.font = '15px monospace'
     ctx.fillStyle = '#333'
-    ;['Rules:', 'No swastikas', "Buy me dinner before you show me your junk"]
-    .forEach((str, i) => { ctx.fillText(str, 0, 1000 + (i+1) * 15) })
+      ;['Rules:', 'No swastikas', "Buy me dinner before you show me your junk"]
+        .forEach((str, i) => { ctx.fillText(str, 0, 1000 + (i + 1) * 15) })
 
     if (mode === 'paint' && isInScreen(mouse.tx, mouse.ty)) {
       const c = colors[brush]
