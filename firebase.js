@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.12.1/firebase-app.js";
-import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.12.1/firebase-analytics.js";
-import { getDatabase } from "https://www.gstatic.com/firebasejs/9.12.1/firebase-database.js";
+import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/9.12.1/firebase-database.js";
+// import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.12.1/firebase-analytics.js";
 
 // <script src="https://www.gstatic.com/firebasejs/9.12.1/firebase-app.js"></script>
 // <script src="https://www.gstatic.com/firebasejs/9.12.1/firebase-analytics.js"></script>
@@ -23,9 +23,11 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
 const db = getDatabase(app);
 
+//const analytics = getAnalytics(app);
+
+/*
 let user
 function signIn() {
   var provider = new firebase.auth.GithubAuthProvider();
@@ -46,17 +48,30 @@ function signIn() {
     // ...
   });
 }
+*/
 
 function writeTile(x, y, color) {
-  db.ref('/tiles/' + 'tile_' + x + '_' + y).set({
+  // https://firebase.google.com/docs/database/web/read-and-write#basic_write
+  set(ref(db, '/tiles/' + 'tile_' + x + '_' + y), {
     x: x,
     y: y,
-    color: color,
-    user: user.displayName
+    color: color
   });
+
+  /*
+    db.ref('/tiles/' + 'tile_' + x + '_' + y).set({
+      x: x,
+      y: y,
+      color: color,
+      user: user.displayName
+    });
+    */
 }
 
 function initDB() {
+  // https://firebase.google.com/docs/database/web/read-and-write#web_value_events
+
+
   return db.ref('/tiles/').once('value').then(function (snapshot) {
     tiles = snapshot.val()
     // console.log(snapshot.val())
