@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.12.1/firebase-app.js";
-import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/9.12.1/firebase-database.js";
+import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/9.12.1/firebase-database.js";
 // import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.12.1/firebase-analytics.js";
 
 // <script src="https://www.gstatic.com/firebasejs/9.12.1/firebase-app.js"></script>
@@ -70,6 +70,13 @@ function writeTile(x, y, color) {
 
 function initDB() {
   // https://firebase.google.com/docs/database/web/read-and-write#web_value_events
+
+  var tilesRef = ref(db, "/tiles/");
+  onValue(tilesRef, (snapshot) => {
+    var data = snapshot.val();
+
+    console.debug(data);
+  });
 
   /*
     return db.ref('/tiles/').once('value').then(function (snapshot) {
