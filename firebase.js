@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.12.1/firebase-app.js";
-import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/9.12.1/firebase-database.js";
+import { getDatabase, ref, get, set, onValue } from "https://www.gstatic.com/firebasejs/9.12.1/firebase-database.js";
 // import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.12.1/firebase-analytics.js";
 
 // <script src="https://www.gstatic.com/firebasejs/9.12.1/firebase-app.js"></script>
@@ -27,6 +27,8 @@ const db = getDatabase(app);
 
 //const analytics = getAnalytics(app);
 
+getTilesAndAttachListener();
+
 /*
 let user
 function signIn() {
@@ -50,32 +52,21 @@ function signIn() {
 }
 */
 
-function writeTile(x, y, color) {
-  // https://firebase.google.com/docs/database/web/read-and-write#basic_write
-  set(ref(db, '/tiles/' + 'tile_' + x + '_' + y), {
-    x: x,
-    y: y,
-    color: color
-  });
-
-  /*
-    db.ref('/tiles/' + 'tile_' + x + '_' + y).set({
-      x: x,
-      y: y,
-      color: color,
-      user: user.displayName
-    });
-    */
-}
-
-function initDB() {
+function getTilesAndAttachListener() {
   // https://firebase.google.com/docs/database/web/read-and-write#web_value_events
 
   var tilesRef = ref(db, "/tiles/");
-  onValue(tilesRef, (snapshot) => {
-    var data = snapshot.val();
+  get(tilesRef, (snapshot) => {
+    var tiles = snapshot.val();
 
-    console.debug(data);
+    console.debug(tiles);
+
+    for (index in tiles) {
+      var tile = tiles[index];
+      updateTile(tile.x, tile.y, tile.color);
+
+      // TODO attach listener
+    }
   });
 
   /*
@@ -102,4 +93,20 @@ function initDB() {
     */
 }
 
-initDB();
+function writeTile(x, y, color) {
+  // https://firebase.google.com/docs/database/web/read-and-write#basic_write
+  set(ref(db, '/tiles/' + 'tile_' + x + '_' + y), {
+    x: x,
+    y: y,
+    color: color
+  });
+
+  /*
+    db.ref('/tiles/' + 'tile_' + x + '_' + y).set({
+      x: x,
+      y: y,
+      color: color,
+      user: user.displayName
+    });
+    */
+}

@@ -37,9 +37,6 @@ const colors = {
   "dark purple": [130, 0, 128]
 }
 
-
-const clamp = (x, min, max) => Math.max(Math.min(x, max), min);
-
 // Stolen from josephg/boilerplate to give me a pannable canvas
 class View {
   constructor(width, height, options) {
@@ -70,10 +67,10 @@ class View {
 
     //debugger;
     if (sizeW > sizeH) {
-      tileSize = clamp(sizeH, 1, 100)
+      tileSize = Math.clamp(sizeH, 1, 100)
       this.scrollX -= (this.width / tileSize - w) / 2
     } else {
-      tileSize = clamp(sizeW, 1, 100)
+      tileSize = Math.clamp(sizeW, 1, 100)
       this.scrollY -= (this.height / tileSize - h) / 2
     }
     this.zoomLevel = tileSize
@@ -84,7 +81,7 @@ class View {
     //console.log(diff, center)
     const oldsize = this.size
     this.zoomLevel += diff
-    this.zoomLevel = clamp(this.zoomLevel, 1, 100)
+    this.zoomLevel = Math.clamp(this.zoomLevel, 1, 100)
 
     this.size = this.zoomLevel
 
@@ -132,14 +129,14 @@ class View {
     const visY = this.height / this.size
 
     if (imgwidth > this.width)
-      this.scrollX = clamp(this.scrollX, -visX / 2, 1000 - visX / 2)
+      this.scrollX = Math.clamp(this.scrollX, -visX / 2, 1000 - visX / 2)
     else
-      this.scrollX = clamp(this.scrollX, 500 - visX, 500)
+      this.scrollX = Math.clamp(this.scrollX, 500 - visX, 500)
 
     if (imgwidth > this.height)
-      this.scrollY = clamp(this.scrollY, -visX / 2, 1000 - visY / 2)
+      this.scrollY = Math.clamp(this.scrollY, -visX / 2, 1000 - visY / 2)
     else
-      this.scrollY = clamp(this.scrollY, 500 - visY, 500)
+      this.scrollY = Math.clamp(this.scrollY, 500 - visY, 500)
   }
 
   resizeTo(width, height) {
