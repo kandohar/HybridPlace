@@ -71,27 +71,28 @@ function writeTile(x, y, color) {
 function initDB() {
   // https://firebase.google.com/docs/database/web/read-and-write#web_value_events
 
-
-  return db.ref('/tiles/').once('value').then(function (snapshot) {
-    tiles = snapshot.val()
-    // console.log(snapshot.val())
-    for (index in tiles) {
-      tile = tiles[index]
-      addTile(tile.x, tile.y, tile.color)
-    }
-  }).then(_ => {
-    console.log('finished loading')
-    document.getElementById("loader").style.display = 'none'
-    document.getElementById("loaded").style.display = 'inline'
-    draw()
-
-    db.ref().child('/tiles/').on('child_changed', function (data) {
-      console.log('child_changed ', data.val())
-      let tile = data.val()
-      addTile(tile.x, tile.y, tile.color)
+  /*
+    return db.ref('/tiles/').once('value').then(function (snapshot) {
+      tiles = snapshot.val()
+      // console.log(snapshot.val())
+      for (index in tiles) {
+        tile = tiles[index]
+        addTile(tile.x, tile.y, tile.color)
+      }
+    }).then(_ => {
+      console.log('finished loading')
+      document.getElementById("loader").style.display = 'none'
+      document.getElementById("loaded").style.display = 'inline'
       draw()
+  
+      db.ref().child('/tiles/').on('child_changed', function (data) {
+        console.log('child_changed ', data.val())
+        let tile = data.val()
+        addTile(tile.x, tile.y, tile.color)
+        draw()
+      });
     });
-  });
+    */
 }
 
-initDB()
+initDB();
