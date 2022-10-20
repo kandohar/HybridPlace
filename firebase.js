@@ -97,7 +97,7 @@ function getTilesAndAttachListener() {
     */
 }
 
-function writeTile(x, y, color) {
+export function writeTile(x, y, color) {
   // https://firebase.google.com/docs/database/web/read-and-write#basic_write
   set(ref(db, '/tiles/' + 'tile_' + x + '_' + y), {
     x: x,

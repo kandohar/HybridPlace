@@ -1,3 +1,5 @@
+import { writeTile } from './firebase.js';
+
 // Most of this front-end was pulled and modified from https://github.com/josephg/sephsplace
 
 // We actually need 2 canvases, 1 for the view and 1 for the content.
