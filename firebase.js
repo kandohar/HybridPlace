@@ -67,6 +67,10 @@ function getTilesAndAttachListener() {
 
       // TODO attach listener
     }
+  }).then(_ => {
+    document.getElementById("loader").style.display = 'none';
+    document.getElementById("loaded").style.display = 'inline';
+    draw();
   });
 
   /*
