@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.12.1/firebase-app.js";
-import { getDatabase, ref, get, set, onValue } from "https://www.gstatic.com/firebasejs/9.12.1/firebase-database.js";
+import { getDatabase, ref, get, set, child, onValue } from "https://www.gstatic.com/firebasejs/9.12.1/firebase-database.js";
 // import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.12.1/firebase-analytics.js";
 import { draw, addTile } from "./main.js"
 
@@ -74,7 +74,6 @@ function getTilesAndAttachListener() {
     } else {
       console.error("no data");
     }
-
   }).catch((error) => {
     console.error(error);
   }).then(_ => {
