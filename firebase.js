@@ -56,8 +56,11 @@ function signIn() {
 function getTilesAndAttachListener() {
   // https://firebase.google.com/docs/database/web/read-and-write#web_value_events
 
-  var tilesRef = ref(db, "/tiles/");
+  var tilesRef = ref(db, "tiles/");
   get(tilesRef, (snapshot) => {
+
+    console.debug(snapshot.exists());
+
     var tiles = snapshot.val();
 
     console.debug(tiles);
@@ -68,6 +71,8 @@ function getTilesAndAttachListener() {
 
       // TODO attach listener
     }
+  }).catch((error) => {
+    console.error(error);
   }).then(_ => {
     document.getElementById("loader").style.display = 'none';
     document.getElementById("loaded").style.display = 'inline';
@@ -100,7 +105,7 @@ function getTilesAndAttachListener() {
 
 export function writeTile(x, y, color) {
   // https://firebase.google.com/docs/database/web/read-and-write#basic_write
-  set(ref(db, '/tiles/' + 'tile_' + x + '_' + y), {
+  set(ref(db, 'tiles/' + 'tile_' + x + '_' + y), {
     x: x,
     y: y,
     color: color
