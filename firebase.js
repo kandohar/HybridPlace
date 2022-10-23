@@ -1,6 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.12.1/firebase-app.js";
 import { getDatabase, ref, get, set, onValue } from "https://www.gstatic.com/firebasejs/9.12.1/firebase-database.js";
 // import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.12.1/firebase-analytics.js";
+import { draw } from main.js
 
 // <script src="https://www.gstatic.com/firebasejs/9.12.1/firebase-app.js"></script>
 // <script src="https://www.gstatic.com/firebasejs/9.12.1/firebase-analytics.js"></script>
