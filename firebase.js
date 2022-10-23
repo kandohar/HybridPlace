@@ -65,7 +65,7 @@ function getTilesAndAttachListener() {
 
       console.debug(tiles);
 
-      for (index in tiles) {
+      for (let index in tiles) {
         var tile = tiles[index];
         addTile(tile.x, tile.y, tile.color);
 
