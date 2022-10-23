@@ -12,50 +12,43 @@ html {
   box-sizing: inherit;
 }
 
-canvas {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+/* COLORS */
 
-  background-color: red;
-}
-
-#toolbar {
+#colors {
   position: fixed;
   left: 30px;
   top: 30px;
+
+  width: 105px;
 }
 
-#toolbar>div,
+#colors>div {
+  display: block;
+  float: left;
+  width: 33px;
+  height: 33px;
+  margin-right: 2px;
+  margin-bottom: 2px;
+  border: 2px solid rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  box-sizing: border-box;
+}
+
+#colors>div.enabled {
+  border: 4px black inset;
+}
+
+/* ZOOM */
+
 #zoom>div {
   display: block;
   width: 50px;
   height: 50px;
   background: #333;
   margin-bottom: 4px;
-}
-
-#toolbar>div {
-  background: #fff;
-  border-radius: 8px 12px;
-  border: 3px solid rgba(0, 0, 0, 0.2)
-}
-
-#zoom>div {
   background: transparent;
 }
 
-#toolbar>div.enabled {
-  border: 5px black inset;
-}
-
-#pantool {
-  margin-bottom: 4px;
-}
-
-#pantool>img,
 #zoomin>img,
 #zoomout>img {
   width: 100%;
@@ -68,6 +61,8 @@ canvas {
   right: 30px;
 }
 
+/* POSITION */
+
 #position {
   position: fixed;
   bottom: 30px;
@@ -77,16 +72,19 @@ canvas {
   user-select: none;
 }
 
-#connected {
+/* INSTRUCTION */
+
+#instruction {
   position: fixed;
-  top: 0px;
-  left: 50%;
-  transform: translateX(-50%);
-  padding: 5px 15px;
-  font-size: 40px;
-  color: white;
-  transition: top 0.6s;
+  bottom: 30px;
+  right: 30px;
+  background: rgba(255, 255, 255, 0.5);
+  padding: 3px;
+
+  text-align: left;
 }
+
+/* LOADER */
 
 #loader {
   position: fixed;
@@ -105,10 +103,6 @@ canvas {
   animation: spin 2s linear infinite;
 }
 
-#loaded {
-  display: none
-}
-
 @keyframes spin {
   0% {
     transform: rotate(0deg);
@@ -117,4 +111,32 @@ canvas {
   100% {
     transform: rotate(360deg);
   }
+}
+
+/* LOADED */
+
+#loaded {
+  display: none;
+  min-width: 100%;
+  width: fit-content;
+  min-height: 100%;
+  height: fit-content;
+
+  /* fallback for old browsers */
+  background: #67B26F;
+  /* Chrome 10-25, Safari 5.1-6 */
+  background: -webkit-linear-gradient(45deg, #4ca2cd, #67B26F);
+  /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  background: linear-gradient(45deg, #4ca2cd, #67B26F);
+
+  text-align: center;
+}
+
+#canvas {
+  cursor: crosshair;
+  box-shadow: 0px 0px 40px 10px white;
+  margin-top: 30px;
+  margin-bottom: 100px;
+  margin-left: 150px;
+  margin-right: 100px;
 }

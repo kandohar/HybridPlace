@@ -1,7 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.12.1/firebase-app.js";
-import { getDatabase, ref, get, set, child, onValue } from "https://www.gstatic.com/firebasejs/9.12.1/firebase-database.js";
+import { getDatabase, ref, set, onChildAdded, onChildChanged } from "https://www.gstatic.com/firebasejs/9.12.1/firebase-database.js";
 // import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.12.1/firebase-analytics.js";
-import { draw, addTile } from "./main.js"
+import { setTile } from "./main.js"
 
 // <script src="https://www.gstatic.com/firebasejs/9.12.1/firebase-app.js"></script>
 // <script src="https://www.gstatic.com/firebasejs/9.12.1/firebase-analytics.js"></script>
@@ -25,10 +25,7 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
-
-//const analytics = getAnalytics(app);
-
-getTilesAndAttachListener();
+// const analytics = getAnalytics(app);
 
 /*
 let user
@@ -53,73 +50,27 @@ function signIn() {
 }
 */
 
-function getTilesAndAttachListener() {
+export function drawServerTiles() {
   // https://firebase.google.com/docs/database/web/read-and-write#web_value_events
 
-  console.debug("getTilesAndAttachListener");
-
-  let dbRef = ref(db);
-  get(child(dbRef, "tiles/")).then((snapshot) => {
-    if (snapshot.exists()) {
-      var tiles = snapshot.val();
-
-      console.debug(tiles);
-
-      for (let index in tiles) {
-        var tile = tiles[index];
-        addTile(tile.x, tile.y, tile.color);
-
-        // TODO attach listener
-      }
-    } else {
-      console.error("no data");
-    }
-  }).catch((error) => {
-    console.error(error);
-  }).then(_ => {
-    document.getElementById("loader").style.display = 'none';
-    document.getElementById("loaded").style.display = 'inline';
-    draw();
+  let tilesRef = ref(db, "tiles/");
+  onChildAdded(tilesRef, (data) => {
+    let tile = data.val();
+    //console.debug("added " + JSON.stringify(tile));
+    setTile(tile.x, tile.y, tile.color);
   });
-
-  /*
-    return db.ref('/tiles/').once('value').then(function (snapshot) {
-      tiles = snapshot.val()
-      // console.log(snapshot.val())
-      for (index in tiles) {
-        tile = tiles[index]
-        addTile(tile.x, tile.y, tile.color)
-      }
-    }).then(_ => {
-      console.log('finished loading')
-      document.getElementById("loader").style.display = 'none'
-      document.getElementById("loaded").style.display = 'inline'
-      draw()
-  
-      db.ref().child('/tiles/').on('child_changed', function (data) {
-        console.log('child_changed ', data.val())
-        let tile = data.val()
-        addTile(tile.x, tile.y, tile.color)
-        draw()
-      });
-    });
-    */
+  onChildChanged(tilesRef, (data) => {
+    let tile = data.val();
+    //console.debug("changed " + JSON.stringify(tile));
+    setTile(tile.x, tile.y, tile.color);
+  });
 }
 
-export function writeTile(x, y, color) {
+export function writeServerTile(x, y, color) {
   // https://firebase.google.com/docs/database/web/read-and-write#basic_write
   set(ref(db, 'tiles/' + 'tile_' + x + '_' + y), {
     x: x,
     y: y,
     color: color
   });
-
-  /*
-    db.ref('/tiles/' + 'tile_' + x + '_' + y).set({
-      x: x,
-      y: y,
-      color: color,
-      user: user.displayName
-    });
-    */
 }

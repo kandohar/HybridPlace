@@ -5,6 +5,7 @@
   <title>Hybrid Place</title>
   <meta charset="utf-8">
   <link rel="icon" href="resources/favicon.png" type="image/png" sizes="32x32">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   <link rel="stylesheet" type="text/css" href="index.css">
 </head>
 
@@ -15,10 +16,9 @@
   </div>
 
   <div id="loaded">
-    <canvas width="100" height="100"></canvas>
-    0
-    <div id='toolbar'>
-      <div id='pantool'><img src='resources/DPAD_all.png'></div>
+    <canvas id="canvas"></canvas>
+
+    <div id='colors'>
     </div>
 
     <div id='zoom'>
@@ -26,7 +26,12 @@
       <div id='zoomout'><img src='resources/zoomOut.png'></div>
     </div>
 
-    <div id='position'>(0, 0)</div>
+    <div id='position'>(-1, -1)</div>
+
+    <div id='instruction'>Select color from left side, use the zoom from top-right corner (or CTRL+mousewheel), move
+      using arrow keys or middle-click+drag, draw,
+      enjoy.<br>
+      Deactivate any dark theme extension to get correct colors</div>
 
   </div>
 
