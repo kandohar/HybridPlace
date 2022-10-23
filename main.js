@@ -404,7 +404,7 @@ export function draw() {
   })
 }
 
-function addTile(x, y, colorName) {
+export function addTile(x, y, colorName) {
   let color = colors[colorName]
   const imagedata = imgctx.createImageData(1, 1)
   const d = imagedata.data
