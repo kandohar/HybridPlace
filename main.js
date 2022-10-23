@@ -346,6 +346,7 @@ window.onwheel = e => {
   mouse.tx = d.tx; mouse.ty = d.ty;
 
   e.preventDefault();
+  e.stopPropagation();
 }
 
 let lastScale = 1
