@@ -58,21 +58,23 @@ function getTilesAndAttachListener() {
 
   console.debug("getTilesAndAttachListener");
 
-  var tilesRef = ref(db, "tiles/");
-  get(tilesRef, (snapshot) => {
+  let dbRef = ref(db);
+  get(child(dbRef, "tiles/")).then((snapshot) => {
+    if (snapshot.exists()) {
+      var tiles = snapshot.val();
 
-    console.debug(snapshot.exists());
+      console.debug(tiles);
 
-    var tiles = snapshot.val();
+      for (index in tiles) {
+        var tile = tiles[index];
+        addTile(tile.x, tile.y, tile.color);
 
-    console.debug(tiles);
-
-    for (index in tiles) {
-      var tile = tiles[index];
-      addTile(tile.x, tile.y, tile.color);
-
-      // TODO attach listener
+        // TODO attach listener
+      }
+    } else {
+      console.error("no data");
     }
+
   }).catch((error) => {
     console.error(error);
   }).then(_ => {
