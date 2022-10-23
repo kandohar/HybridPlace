@@ -365,7 +365,7 @@ const isInScreen = (tx, ty) => (
   tx >= 0 && tx < 1000 && ty >= 0 && ty < 1000
 )
 
-function draw() {
+export function draw() {
   if (needsDraw) return
   needsDraw = true
   requestAnimationFrame(() => {
