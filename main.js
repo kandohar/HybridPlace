@@ -288,6 +288,7 @@ canvas.onmousedown = e => {
       imgctx.putImageData(imagedata, tx, ty)
       // paintedColor = rgbToColorNames[[color[0],color[1],color[2]]]
 
+      let paintedColor;
       for (let c in colors) {
         if (colors[c][0] === color[0] && colors[c][1] === color[1] && colors[c][2] === color[2]) {
           paintedColor = c
