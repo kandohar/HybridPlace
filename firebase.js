@@ -56,6 +56,8 @@ function signIn() {
 function getTilesAndAttachListener() {
   // https://firebase.google.com/docs/database/web/read-and-write#web_value_events
 
+  console.debug("getTilesAndAttachListener");
+
   var tilesRef = ref(db, "tiles/");
   get(tilesRef, (snapshot) => {
 
