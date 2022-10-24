@@ -1,7 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.12.1/firebase-app.js";
-import { getDatabase, ref, set, onChildAdded, onChildChanged } from "https://www.gstatic.com/firebasejs/9.12.1/firebase-database.js";
+import { getDatabase, ref, get, set, child, onChildAdded, onChildChanged } from "https://www.gstatic.com/firebasejs/9.12.1/firebase-database.js";
 // import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.12.1/firebase-analytics.js";
-import { setTile } from "./main.js"
 
 // <script src="https://www.gstatic.com/firebasejs/9.12.1/firebase-app.js"></script>
 // <script src="https://www.gstatic.com/firebasejs/9.12.1/firebase-analytics.js"></script>
@@ -50,7 +49,7 @@ function signIn() {
 }
 */
 
-export function drawServerTiles() {
+export function drawServerTiles(setTile) {
   // https://firebase.google.com/docs/database/web/read-and-write#web_value_events
 
   let tilesRef = ref(db, "tiles/");
@@ -66,11 +65,25 @@ export function drawServerTiles() {
   });
 }
 
-export function writeServerTile(x, y, color) {
+export function writeServerTile(x, y, color, username) {
   // https://firebase.google.com/docs/database/web/read-and-write#basic_write
   set(ref(db, 'tiles/' + 'tile_' + x + '_' + y), {
     x: x,
     y: y,
-    color: color
+    color: color,
+    username: username
+  });
+}
+
+export function getStats(callback) {
+  let dbRef = ref(db);
+  return get(child(dbRef, "tiles/")).then((snapshot) => {
+    if (snapshot.exists()) {
+      callback(snapshot.val());
+    } else {
+      console.error("no data");
+    }
+  }).catch((error) => {
+    console.error(error);
   });
 }

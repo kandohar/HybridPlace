@@ -12,14 +12,36 @@ html {
   box-sizing: inherit;
 }
 
+/* USERNAME */
+
+#username {
+  position: fixed;
+  top: 30px;
+  left: 30px;
+  padding: 3px;
+  user-select: none;
+
+  color: white;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+#usernameReset {
+  margin-left: 5px;
+  color: white;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
 /* COLORS */
 
 #colors {
   position: fixed;
+  top: 70px;
   left: 30px;
-  top: 30px;
 
   width: 105px;
+
+  border-radius: 10px;
+  background-color: rgba(0, 0, 0, 0.5);
 }
 
 #colors>div {
@@ -29,22 +51,29 @@ html {
   height: 33px;
   margin-right: 2px;
   margin-bottom: 2px;
-  border: 2px solid rgba(0, 0, 0, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.4);
   border-radius: 10px;
   box-sizing: border-box;
 }
 
 #colors>div.enabled {
-  border: 4px black inset;
+  border: 4px white inset;
 }
 
 /* ZOOM */
+
+#zoom {
+  position: fixed;
+  top: 30px;
+  right: 30px;
+
+  background-color: rgba(0, 0, 0, 0.5);
+}
 
 #zoom>div {
   display: block;
   width: 50px;
   height: 50px;
-  background: #333;
   margin-bottom: 4px;
   background: transparent;
 }
@@ -55,21 +84,17 @@ html {
   height: 100%
 }
 
-#zoom {
-  position: fixed;
-  top: 30px;
-  right: 30px;
-}
-
 /* POSITION */
 
 #position {
   position: fixed;
   bottom: 30px;
   left: 30px;
-  background: rgba(255, 255, 255, 0.5);
   padding: 3px;
   user-select: none;
+
+  color: white;
+  background: rgba(0, 0, 0, 0.5);
 }
 
 /* INSTRUCTION */
@@ -78,8 +103,10 @@ html {
   position: fixed;
   bottom: 30px;
   right: 30px;
-  background: rgba(255, 255, 255, 0.5);
   padding: 3px;
+
+  color: white;
+  background: rgba(0, 0, 0, 0.5);
 
   text-align: left;
 }
@@ -123,18 +150,19 @@ html {
   height: fit-content;
 
   /* fallback for old browsers */
-  background: #67B26F;
-  /* Chrome 10-25, Safari 5.1-6 */
-  background: -webkit-linear-gradient(45deg, #4ca2cd, #67B26F);
+  background: #526854;
   /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-  background: linear-gradient(45deg, #4ca2cd, #67B26F);
+  background: linear-gradient(45deg, #094766, #857f5a);
+  /* Chrome 10-25, Safari 5.1-6 */
+  background: -webkit-linear-gradient(45deg, #094766, #857f5a);
 
   text-align: center;
 }
 
+
 #canvas {
   cursor: crosshair;
-  box-shadow: 0px 0px 40px 10px white;
+  box-shadow: 0px 0px 40px 10px #808080;
   margin-top: 30px;
   margin-bottom: 100px;
   margin-left: 150px;
