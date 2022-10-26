@@ -6,7 +6,7 @@ const defaultCanvasColor = "#FFFFFF";
 
 const defaultZoom = 8;
 
-let outputCanvas;
+const outputCanvas = document.getElementById("canvas");
 let outputCtxt;
 
 let dataCanvas;
@@ -21,6 +21,18 @@ let mousePos = { x: -1, y: -1 };
 
 const cookieName = "hybrid-place-username=";
 let username = "anonymous";
+
+let userData = [[]];
+
+const zoomInElem = document.getElementById("zoomin");
+const zoomOutElem = document.getElementById("zoomout");
+const positionElem = document.getElementById("position");
+const drawnByValueElem = document.getElementById("drawnByValue");
+const usernameValueElem = document.getElementById("usernameValue");
+const usernameResetElem = document.getElementById("usernameReset");
+
+const rootStyle = document.querySelector(":root").style;
+let nextSide = true;
 
 initUser();
 initOutputCanvas();
@@ -51,10 +63,10 @@ function initUser() {
     }
 
     // show username
-    document.getElementById("usernameValue").textContent = decodeURIComponent(username);
+    usernameValueElem.textContent = decodeURIComponent(username);
 
     // init usernameReset button
-    document.getElementById("usernameReset").onclick = (_) => {
+    usernameResetElem.onclick = (_) => {
         let input = encodeURIComponent(prompt("Username:"));
         if (input) {
             username = input;
@@ -62,12 +74,11 @@ function initUser() {
             username = "anonymous";
         }
         document.cookie = `${cookieName}${username}; SameSite=strict; Secure`;
-        document.getElementById("usernameValue").textContent = decodeURIComponent(username);
+        usernameValueElem.textContent = decodeURIComponent(username);
     };
 }
 
 function initOutputCanvas() {
-    outputCanvas = document.getElementById("canvas");
     outputCanvas.width = canvasWidth * defaultZoom;
     outputCanvas.height = canvasHeight * defaultZoom;
     outputCtxt = outputCanvas.getContext("2d");
@@ -79,10 +90,16 @@ function initOutputCanvas() {
     };
 
     // update position text value
-    let positionElem = document.getElementById("position");
     outputCanvas.onmousemove = e => {
         let pos = getLocalMousePosition(e);
+
         positionElem.textContent = `(${pos.x}, ${pos.y})`;
+
+        if (userData[pos.x] != null && userData[pos.x][pos.y] != null) {
+            drawnByValueElem.textContent = userData[pos.x][pos.y];
+        } else {
+            drawnByValueElem.textContent = "anonymous";
+        }
 
         mousePos.x = pos.x;
         mousePos.y = pos.y;
@@ -90,6 +107,8 @@ function initOutputCanvas() {
     };
     outputCanvas.onmouseleave = _ => {
         positionElem.textContent = `(-1, -1)`;
+
+        drawnByValueElem.textContent = "";
 
         mousePos.x = -1;
         mousePos.y = -1;
@@ -107,13 +126,10 @@ function initDataCanvas() {
 }
 
 function initZoomButtons() {
-    let zoomInButton = document.getElementById("zoomin");
-    let zoomOutButton = document.getElementById("zoomout");
-
-    zoomInButton.onclick = _ => {
+    zoomInElem.onclick = _ => {
         zoomIn();
     };
-    zoomOutButton.onclick = _ => {
+    zoomOutElem.onclick = _ => {
         zoomOut();
     };
 
@@ -157,6 +173,13 @@ function initColorButtons() {
             currentColor = color;
             colorButtons.forEach(cb => cb.classList.remove("enabled"));
             colorButton.classList.add("enabled");
+
+            if (nextSide) {
+                rootStyle.setProperty("--bg-color-1", color);
+            } else {
+                rootStyle.setProperty("--bg-color-2", color);
+            }
+            nextSide = !nextSide;
         };
 
         colorsElem.appendChild(colorButton);
@@ -200,22 +223,26 @@ function renderOutputCanvas() {
 }
 
 function zoomIn() {
-    outputCanvas.width = clamp(outputCanvas.width * 2, 100, 6400);
-    outputCanvas.height = clamp(outputCanvas.height * 2, 100, 6400);
+    outputCanvas.width = clamp(outputCanvas.width * 2, canvasWidth, 6400);
+    outputCanvas.height = clamp(outputCanvas.height * 2, canvasHeight, 6400);
 
     renderOutputCanvas();
 }
 
 function zoomOut() {
-    outputCanvas.width = clamp(outputCanvas.width * 0.5, 100, 6400);
-    outputCanvas.height = clamp(outputCanvas.height * 0.5, 100, 6400);
+    outputCanvas.width = clamp(outputCanvas.width * 0.5, canvasWidth, 6400);
+    outputCanvas.height = clamp(outputCanvas.height * 0.5, canvasHeight, 6400);
 
     renderOutputCanvas();
 }
 
-function setTile(x, y, color) {
+function setTile(x, y, color, username) {
     dataCtxt.fillStyle = color;
     dataCtxt.fillRect(x, y, 1, 1);
+
+    if (userData[x] == null)
+        userData[x] = [];
+    userData[x][y] = username;
 
     renderOutputCanvas();
 }

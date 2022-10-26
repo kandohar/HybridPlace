@@ -1,3 +1,14 @@
+:root {
+  --bg-color-1: white;
+  --bg-color-2: white;
+  --bg-angle: 0deg;
+
+  --bloom-color: #808080;
+
+  --text-color: white;
+  --text-bg: rgba(0, 0, 0, 0.5);
+}
+
 body,
 html {
   width: 100%;
@@ -21,14 +32,14 @@ html {
   padding: 3px;
   user-select: none;
 
-  color: white;
-  background: rgba(0, 0, 0, 0.5);
+  color: var(--text-color);
+  background: var(--text-bg);
 }
 
 #usernameReset {
   margin-left: 5px;
-  color: white;
-  background-color: rgba(0, 0, 0, 0.5);
+  color: var(--text-color);
+  background-color: var(--text-bg);
 }
 
 /* COLORS */
@@ -41,7 +52,7 @@ html {
   width: 105px;
 
   border-radius: 10px;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: var(--text-bg);
 }
 
 #colors>div {
@@ -67,7 +78,7 @@ html {
   top: 30px;
   right: 30px;
 
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: var(--text-bg);
 }
 
 #zoom>div {
@@ -93,8 +104,21 @@ html {
   padding: 3px;
   user-select: none;
 
-  color: white;
-  background: rgba(0, 0, 0, 0.5);
+  color: var(--text-color);
+  background: var(--text-bg);
+}
+
+/* DRAWN BY */
+
+#drawnBy {
+  position: fixed;
+  bottom: 30px;
+  left: 100px;
+  padding: 3px;
+  user-select: none;
+
+  color: var(--text-color);
+  background: var(--text-bg);
 }
 
 /* INSTRUCTION */
@@ -105,8 +129,8 @@ html {
   right: 30px;
   padding: 3px;
 
-  color: white;
-  background: rgba(0, 0, 0, 0.5);
+  color: var(--text-color);
+  background: var(--text-bg);
 
   text-align: left;
 }
@@ -150,11 +174,11 @@ html {
   height: fit-content;
 
   /* fallback for old browsers */
-  background: #526854;
+  background: var(--bg-color-1);
   /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-  background: linear-gradient(45deg, #094766, #857f5a);
+  background: linear-gradient(var(--bg-angle), var(--bg-color-1), var(--bg-color-2));
   /* Chrome 10-25, Safari 5.1-6 */
-  background: -webkit-linear-gradient(45deg, #094766, #857f5a);
+  background: -webkit-linear-gradient(var(--bg-angle), var(--bg-color-1), var(--bg-color-2));
 
   text-align: center;
 }
@@ -162,7 +186,7 @@ html {
 
 #canvas {
   cursor: crosshair;
-  box-shadow: 0px 0px 40px 10px #808080;
+  box-shadow: 0px 0px 40px 10px var(--bloom-color);
   margin-top: 30px;
   margin-bottom: 100px;
   margin-left: 150px;

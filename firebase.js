@@ -56,12 +56,12 @@ export function drawServerTiles(setTile) {
   onChildAdded(tilesRef, (data) => {
     let tile = data.val();
     //console.debug("added " + JSON.stringify(tile));
-    setTile(tile.x, tile.y, tile.color);
+    setTile(tile.x, tile.y, tile.color, tile.username);
   });
   onChildChanged(tilesRef, (data) => {
     let tile = data.val();
     //console.debug("changed " + JSON.stringify(tile));
-    setTile(tile.x, tile.y, tile.color);
+    setTile(tile.x, tile.y, tile.color, tile.username);
   });
 }
 
