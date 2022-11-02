@@ -1,14 +1,18 @@
 import { drawServerTiles, writeServerTile } from "./firebase.js";
 
+// BEGIN SETTINGS
 const canvasWidth = 100;
 const canvasHeight = 100;
 const defaultCanvasColor = "#FFFFFF";
 
 const defaultZoom = 8;
+// END SETTINGS
 
+// displayed data, resizable
 const outputCanvas = document.getElementById("canvas");
 let outputCtxt;
 
+// data linked to database
 let dataCanvas;
 let dataCtxt;
 
@@ -22,7 +26,7 @@ let mousePos = { x: -1, y: -1 };
 const cookieName = "hybrid-place-username=";
 let username = "anonymous";
 
-let userData = [[]];
+let pixelDrawnByData = [[]];
 
 const zoomInElem = document.getElementById("zoomin");
 const zoomOutElem = document.getElementById("zoomout");
@@ -31,9 +35,7 @@ const drawnByValueElem = document.getElementById("drawnByValue");
 const usernameValueElem = document.getElementById("usernameValue");
 const usernameResetElem = document.getElementById("usernameReset");
 
-const rootStyle = document.querySelector(":root").style;
-let nextSide = true;
-
+// init everything
 initUser();
 initOutputCanvas();
 initDataCanvas();
@@ -41,6 +43,7 @@ initZoomButtons();
 initColorPalette();
 initColorButtons();
 
+// then hide spinner and show canvas
 document.getElementById("loader").style.display = 'none';
 document.getElementById("loaded").style.display = 'block';
 
@@ -55,10 +58,13 @@ function initUser() {
         }
     } else {
         // no cookie, ask user, create cookie
-        let input = encodeURIComponent(prompt("Username:"));
+        let input = prompt("Username: (empty='anonymous')");
         if (input) {
-            username = input;
-            document.cookie = `${cookieName}${input}; SameSite=strict; Secure`;
+            let safeInput = encodeURIComponent(input);
+            username = safeInput;
+            document.cookie = `${cookieName}${safeInput}; SameSite=strict; Max-Age=172800; Secure`;
+        } else {
+            username = "anonymous";
         }
     }
 
@@ -67,13 +73,14 @@ function initUser() {
 
     // init usernameReset button
     usernameResetElem.onclick = (_) => {
-        let input = encodeURIComponent(prompt("Username:"));
+        let input = prompt("Username: (empty='anonymous')");
         if (input) {
-            username = input;
+            let safeInput = encodeURIComponent(input);
+            username = safeInput;
         } else {
             username = "anonymous";
         }
-        document.cookie = `${cookieName}${username}; SameSite=strict; Secure`;
+        document.cookie = `${cookieName}${username}; SameSite=strict; Max-Age=172800; Secure`;
         usernameValueElem.textContent = decodeURIComponent(username);
     };
 }
@@ -89,16 +96,16 @@ function initOutputCanvas() {
         writeServerTile(pos.x, pos.y, currentColor, username);
     };
 
-    // update position text value
+    // update position & drawnBy values
     outputCanvas.onmousemove = e => {
         let pos = getLocalMousePosition(e);
 
         positionElem.textContent = `(${pos.x}, ${pos.y})`;
 
-        if (userData[pos.x] != null && userData[pos.x][pos.y] != null) {
-            drawnByValueElem.textContent = userData[pos.x][pos.y];
+        if (pixelDrawnByData[pos.x] != null && pixelDrawnByData[pos.x][pos.y] != null) {
+            drawnByValueElem.textContent = pixelDrawnByData[pos.x][pos.y];
         } else {
-            drawnByValueElem.textContent = "anonymous";
+            drawnByValueElem.textContent = "";
         }
 
         mousePos.x = pos.x;
@@ -122,6 +129,7 @@ function initDataCanvas() {
     dataCanvas.height = canvasHeight
     dataCtxt = dataCanvas.getContext('2d')
 
+    // get values from db
     drawServerTiles(setTile);
 }
 
@@ -133,6 +141,7 @@ function initZoomButtons() {
         zoomOut();
     };
 
+    // cancel CTRL+wheel browser zoom, instead apply custom zoom
     window.addEventListener('wheel', (e) => {
         if (e.ctrlKey) {
             if (e.deltaY < 0) {
@@ -162,7 +171,7 @@ function initColorPalette() {
 }
 
 function initColorButtons() {
-    // Add brush tools.
+    // for each color in colorPalette, creates a corresponding button
     let colorsElem = document.getElementById("colors");
 
     for (let i in colorPalette) {
@@ -173,24 +182,19 @@ function initColorButtons() {
             currentColor = color;
             colorButtons.forEach(cb => cb.classList.remove("enabled"));
             colorButton.classList.add("enabled");
-
-            if (nextSide) {
-                rootStyle.setProperty("--bg-color-1", color);
-            } else {
-                rootStyle.setProperty("--bg-color-2", color);
-            }
-            nextSide = !nextSide;
         };
 
         colorsElem.appendChild(colorButton);
         colorButtons.push(colorButton);
     }
 
+    // select the first color by default
     colorButtons[0].onclick();
 }
 
 // EVENTS
 function renderOutputCanvas() {
+    // solution to avoid multiple render call in 1 frame
     if (requestDraw)
         return;
 
@@ -212,6 +216,7 @@ function renderOutputCanvas() {
         outputCtxt.drawImage(dataCanvas, 0, 0);
         outputCtxt.restore();
 
+        // draw pixel preview on cursor
         if (mousePos.x != -1 && mousePos.y != -1) {
             outputCtxt.save();
             outputCtxt.scale(widthScaleFactor, heightScaleFactor);
@@ -237,17 +242,19 @@ function zoomOut() {
 }
 
 function setTile(x, y, color, username) {
+    // update the data canvas
     dataCtxt.fillStyle = color;
     dataCtxt.fillRect(x, y, 1, 1);
 
-    if (userData[x] == null)
-        userData[x] = [];
-    userData[x][y] = username;
+    if (pixelDrawnByData[x] == null)
+        pixelDrawnByData[x] = [];
+    pixelDrawnByData[x][y] = username;
 
     renderOutputCanvas();
 }
 
 function getLocalMousePosition(e) {
+    // convert window mouse position into data canvas mouse position
     let rect = outputCanvas.getBoundingClientRect();
     var x = e.clientX - rect.left;
     var y = e.clientY - rect.top;

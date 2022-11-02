@@ -1,7 +1,7 @@
 :root {
-  --bg-color-1: white;
-  --bg-color-2: white;
-  --bg-angle: 0deg;
+  --bg-color-1: #00635b;
+  --bg-color-2: #8d8111;
+  --bg-angle: 45deg;
 
   --bloom-color: #808080;
 
@@ -147,7 +147,7 @@ html {
   border-top: 16px solid blue;
   border-right: 16px solid green;
   border-bottom: 16px solid red;
-  border-left: 16px solid pink;
+  border-left: 16px solid yellow;
   border-radius: 50%;
   width: 120px;
   height: 120px;
@@ -191,4 +191,24 @@ html {
   margin-bottom: 100px;
   margin-left: 150px;
   margin-right: 100px;
+}
+
+/* ERROR CONSOLE */
+#errorConsole {
+  display: none;
+
+  position: fixed;
+
+  left: 50%;
+  top: 10%;
+  transform: translate(-50%, 0%);
+
+  width: 60%;
+  height: auto;
+  min-height: 10%;
+
+  padding: 10px;
+
+  color: var(--text-color);
+  background: var(--text-bg);
 }

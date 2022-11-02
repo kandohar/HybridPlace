@@ -1,27 +1,50 @@
 import { getStats } from "./firebase.js";
 
-let stats = {};
+let tilesCount = {};
+let statsCount = {};
 
-getStats((data) => {
+let canvasPixelCountElem = document.getElementById("canvasPixelCount");
+let canvasPixelDrawnByElem = document.getElementById("canvasPixelDrawnBy");
+let statsPixelCountElem = document.getElementById("statsPixelCount");
+let statsUserClicksElem = document.getElementById("statsUserClicks");
 
-    for (let i in data) {
-        let entry = data[i];
+getStats((tiles) => {
+    for (let i in tiles) {
+        let entry = tiles[i];
 
         if (entry.hasOwnProperty("username")) {
-            incStats(entry["username"]);
+            inc(tilesCount, entry["username"]);
         } else {
-            incStats("anonymous");
+            inc(tilesCount, "anonymous");
         }
     }
 
-    document.getElementById("stats").textContent += "Total = " + Object.keys(data).length + " ";
-    document.getElementById("stats").textContent += JSON.stringify(stats);
+    canvasPixelCountElem.textContent = Object.keys(tiles).length;
+
+    Object.entries(tilesCount).forEach(entry => {
+        const [key, value] = entry;
+        canvasPixelDrawnByElem.innerHTML += `<tr><td>${key}</td><td>${value}</td></tr>`;
+    });
+}, (stats) => {
+    let sumClicks = 0;
+    Object.entries(stats).forEach(entry => {
+        const [key, value] = entry;
+        statsCount[key] = value["clicks"];
+        sumClicks += value["clicks"];
+    });
+
+    statsPixelCountElem.textContent = sumClicks;
+
+    Object.entries(statsCount).forEach(entry => {
+        const [key, value] = entry;
+        statsUserClicksElem.innerHTML += `<tr><td>${key}</td><td>${value}</td></tr>`;
+    });
 });
 
-function incStats(name) {
-    if (stats.hasOwnProperty(name))
-        stats[name]++;
+function inc(array, name) {
+    if (array.hasOwnProperty(name))
+        array[name]++;
     else
-        stats[name] = 1;
+        array[name] = 1;
 }
 

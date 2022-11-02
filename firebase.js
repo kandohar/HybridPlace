@@ -1,15 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.12.1/firebase-app.js";
-import { getDatabase, ref, get, set, child, onChildAdded, onChildChanged } from "https://www.gstatic.com/firebasejs/9.12.1/firebase-database.js";
-// import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.12.1/firebase-analytics.js";
-
-// <script src="https://www.gstatic.com/firebasejs/9.12.1/firebase-app.js"></script>
-// <script src="https://www.gstatic.com/firebasejs/9.12.1/firebase-analytics.js"></script>
-// <script src="https://www.gstatic.com/firebasejs/9.12.1/firebase-database.js"></script>
-
-// <script src="https://www.gstatic.com/firebasejs/9.12.1/firebase-auth.js"></script>
-// <script src="https://www.gstatic.com/firebasejs/ui/4.6.0/firebase-ui-auth.js"></script>
-// <link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/4.6.0/firebase-ui-auth.css" />
-
+import { getDatabase, ref, get, set, child, onChildAdded, onChildChanged, increment } from "https://www.gstatic.com/firebasejs/9.12.1/firebase-database.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDPGa9tystBypSl31xxmH-S1aQVs-mAbds",
@@ -24,66 +14,86 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
-// const analytics = getAnalytics(app);
 
-/*
-let user
-function signIn() {
-  var provider = new firebase.auth.GithubAuthProvider();
-  firebase.auth().signInWithPopup(provider).then(function (result) {
-    // This gives you a GitHub Access Token. You can use it to access the GitHub API.
-    var token = result.credential.accessToken;
-    // The signed-in user info.
-    user = result.user;
-    // ...
-  }).catch(function (error) {
-    // Handle Errors here.
-    var errorCode = error.code;
-    var errorMessage = error.message;
-    // The email of the user's account used.
-    var email = error.email;
-    // The firebase.auth.AuthCredential type that was used.
-    var credential = error.credential;
-    // ...
-  });
-}
-*/
+const documentErrorConsole = document.getElementById("errorConsole");
 
-export function drawServerTiles(setTile) {
+export function drawServerTiles(setTileCallback) {
   // https://firebase.google.com/docs/database/web/read-and-write#web_value_events
 
   let tilesRef = ref(db, "tiles/");
+
+  // called on start and every time a new tile is added
   onChildAdded(tilesRef, (data) => {
     let tile = data.val();
-    //console.debug("added " + JSON.stringify(tile));
-    setTile(tile.x, tile.y, tile.color, tile.username);
+    setTileCallback(tile.x, tile.y, tile.color, tile.username);
+  }, (error) => {
+    console.error(error);
+    showError(error);
   });
+
+  // called when a tile is modified
   onChildChanged(tilesRef, (data) => {
     let tile = data.val();
-    //console.debug("changed " + JSON.stringify(tile));
-    setTile(tile.x, tile.y, tile.color, tile.username);
+    setTileCallback(tile.x, tile.y, tile.color, tile.username);
+  }, (error) => {
+    console.error(error);
+    showError(error);
   });
 }
 
 export function writeServerTile(x, y, color, username) {
   // https://firebase.google.com/docs/database/web/read-and-write#basic_write
+
+  // create or update a tile on the db
   set(ref(db, 'tiles/' + 'tile_' + x + '_' + y), {
     x: x,
     y: y,
     color: color,
     username: username
+  }).catch((error) => {
+    console.error(error);
+    showError(error);
   });
+
+  // increments stats
+  set(ref(db, 'stats/' + username), {
+    clicks: increment(1)
+  }).catch((error => {
+    console.error(error);
+    showError(error);
+  }));
 }
 
-export function getStats(callback) {
+export function getStats(callbackTiles, callbackStats) {
   let dbRef = ref(db);
-  return get(child(dbRef, "tiles/")).then((snapshot) => {
+
+  // get whole tiles table
+  get(child(dbRef, "tiles/")).then((snapshot) => {
     if (snapshot.exists()) {
-      callback(snapshot.val());
+      callbackTiles(snapshot.val());
+    } else {
+      console.error("no data");
+      showError(error);
+    }
+  }).catch((error) => {
+    console.error(error);
+    showError(error);
+  });
+
+  // get whole stats table
+  get(child(dbRef, "stats/")).then((snapshot) => {
+    if (snapshot.exists()) {
+      callbackStats(snapshot.val());
     } else {
       console.error("no data");
     }
   }).catch((error) => {
     console.error(error);
+    showError(error);
   });
+}
+
+function showError(error) {
+  documentErrorConsole.innerHTML += error + "<br>";
+  documentErrorConsole.style.display = "block";
 }

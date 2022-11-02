@@ -6,13 +6,19 @@
     <meta charset="utf-8">
     <link rel="icon" href="resources/favicon.png" type="image/png" sizes="32x32">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="darkreader" content="dark" />
 </head>
 
 <body>
+    <h1>Current canvas</h1>
+    Pixels on canvas :<span id="canvasPixelCount"></span>
+    <hr />
+    <table id="canvasPixelDrawnBy"></table>
 
-    <div id="stats">
-
-    </div>
+    <h1>Total</h1>
+    Total clicks :<span id="statsPixelCount"></span>
+    <hr />
+    <table id="statsUserClicks"></table>
 
     <script type="module" src="stats.js"></script>
 </body>

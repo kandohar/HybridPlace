@@ -6,11 +6,12 @@
   <meta charset="utf-8">
   <link rel="icon" href="resources/favicon.png" type="image/png" sizes="32x32">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="darkreader" content="dark" />
   <link rel="stylesheet" type="text/css" href="index.css">
 </head>
 
 <body>
-  <div class="loader" id="loader">
+  <div id="loader">
     <div id="spinner"></div>
     <p>Loading...</p>
   </div>
@@ -33,11 +34,12 @@
     <div id='drawnBy'>Drawn by: <span id="drawnByValue"></span></div>
 
     <div id='instruction'>Select color from left side, use the zoom from top-right corner (or CTRL+mousewheel), move
-      using arrow keys or middle-click+drag, draw,
-      enjoy.<br>
+      using arrow keys (or middle-click+drag), draw, enjoy.<br>
       Deactivate any dark theme extension to get correct colors</div>
 
   </div>
+
+  <div id="errorConsole"></div>
 
   <script type="module" src="main.js"></script>
 </body>
