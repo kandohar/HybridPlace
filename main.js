@@ -1,4 +1,4 @@
-import { drawServerTiles, writeServerTile } from "./firebase.js";
+import { drawServerTiles, incConnectionCount, writeServerTile } from "./firebase.js";
 
 // BEGIN SETTINGS
 const canvasWidth = 100;
@@ -68,8 +68,11 @@ function initUser() {
         }
     }
 
-    // show username
+    // show username display
     usernameValueElem.textContent = decodeURIComponent(username);
+
+    // inc stats connection count
+    incConnectionCount(username);
 
     // init usernameReset button
     usernameResetElem.onclick = (_) => {
@@ -80,8 +83,13 @@ function initUser() {
         } else {
             username = "anonymous";
         }
+
+        // update cookie
         document.cookie = `${cookieName}${username}; SameSite=strict; Max-Age=172800; Secure`;
+        // update username display
         usernameValueElem.textContent = decodeURIComponent(username);
+        // inc stats connection count
+        incConnectionCount(username);
     };
 }
 
@@ -93,7 +101,10 @@ function initOutputCanvas() {
     // draw on click
     outputCanvas.onclick = e => {
         let pos = getLocalMousePosition(e);
-        writeServerTile(pos.x, pos.y, currentColor, username);
+
+        if (isValidDraw(pos.x, pos.y, currentColor))
+            writeServerTile(pos.x, pos.y, currentColor, username);
+
     };
 
     // update position & drawnBy values
@@ -103,7 +114,7 @@ function initOutputCanvas() {
         positionElem.textContent = `(${pos.x}, ${pos.y})`;
 
         if (pixelDrawnByData[pos.x] != null && pixelDrawnByData[pos.x][pos.y] != null) {
-            drawnByValueElem.textContent = pixelDrawnByData[pos.x][pos.y];
+            drawnByValueElem.textContent = decodeURIComponent(pixelDrawnByData[pos.x][pos.y]);
         } else {
             drawnByValueElem.textContent = "";
         }
@@ -286,4 +297,30 @@ function hslToHex(h, s, l) {
         return Math.round(255 * color).toString(16).padStart(2, '0');   // convert to Hex and prefix "0" if needed
     };
     return `#${f(0)}${f(8)}${f(4)}`;
+}
+
+function isValidDraw(x, y, color) {
+    // get current color on canvas
+    let targetPixelData = dataCtxt.getImageData(x, y, 1, 1).data;
+    let targetPixelColor = imageDataToRGB(targetPixelData);
+
+    // if no pixel was already placed, the default valid is #000000 so allow it
+    if (targetPixelColor.toLowerCase() == "#000000")
+        return true;
+
+    // check canvas pixel != desired pixel
+    if (targetPixelColor.toLowerCase() != color.toLowerCase())
+        return true;
+
+    return false;
+}
+
+function imageDataToRGB(data) {
+    let r = data[0];
+    let g = data[1];
+    let b = data[2];
+
+    let rgb = "#" + ("000000" + (((r << 16) | (g << 8) | b).toString(16))).slice(-6);
+
+    return rgb;
 }

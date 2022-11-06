@@ -1,12 +1,12 @@
 import { getStats } from "./firebase.js";
 
 let tilesCount = {};
-let statsCount = {};
+let clicksCount = {};
+let connectionsCount = {};
 
-let canvasPixelCountElem = document.getElementById("canvasPixelCount");
-let canvasPixelDrawnByElem = document.getElementById("canvasPixelDrawnBy");
-let statsPixelCountElem = document.getElementById("statsPixelCount");
-let statsUserClicksElem = document.getElementById("statsUserClicks");
+let tilesDrawnByTableElem = document.getElementById("tilesDrawnByTable");
+let statsConnectionsTableElem = document.getElementById("statsConnectionsTable");
+let statsClicksTableElem = document.getElementById("statsClicksTable");
 
 getStats((tiles) => {
     for (let i in tiles) {
@@ -19,25 +19,40 @@ getStats((tiles) => {
         }
     }
 
-    canvasPixelCountElem.textContent = Object.keys(tiles).length;
-
+    tilesDrawnByTableElem.appendChild(createTableRow("Total", Object.keys(tiles).length));
     Object.entries(tilesCount).forEach(entry => {
         const [key, value] = entry;
-        canvasPixelDrawnByElem.innerHTML += `<tr><td>${key}</td><td>${value}</td></tr>`;
+        tilesDrawnByTableElem.appendChild(createTableRow(key, value));
     });
 }, (stats) => {
     let sumClicks = 0;
+    let sumConnections = 0;
     Object.entries(stats).forEach(entry => {
         const [key, value] = entry;
-        statsCount[key] = value["clicks"];
-        sumClicks += value["clicks"];
+        if (value.hasOwnProperty("connections")) {
+            connectionsCount[key] = value["connections"];
+            sumConnections += value["connections"];
+        } else {
+            connectionsCount[key] = 0;
+        }
+        if (value.hasOwnProperty("clicks")) {
+            clicksCount[key] = value["clicks"];
+            sumClicks += value["clicks"];
+        } else {
+            clicksCount[key] = 0;
+        }
     });
 
-    statsPixelCountElem.textContent = sumClicks;
-
-    Object.entries(statsCount).forEach(entry => {
+    statsConnectionsTableElem.appendChild(createTableRow("Total", sumConnections));
+    Object.entries(connectionsCount).forEach(entry => {
         const [key, value] = entry;
-        statsUserClicksElem.innerHTML += `<tr><td>${key}</td><td>${value}</td></tr>`;
+        statsConnectionsTableElem.appendChild(createTableRow(key, value));
+    });
+
+    statsClicksTableElem.appendChild(createTableRow("Total", sumClicks));
+    Object.entries(clicksCount).forEach(entry => {
+        const [key, value] = entry;
+        statsClicksTableElem.appendChild(createTableRow(key, value));
     });
 });
 
@@ -46,5 +61,19 @@ function inc(array, name) {
         array[name]++;
     else
         array[name] = 1;
+}
+
+function createTableRow(val1, val2) {
+    let row = document.createElement("tr");
+    let col1 = document.createElement("td");
+    let col2 = document.createElement("td");
+
+    col1.textContent = decodeURIComponent(val1);
+    col2.textContent = decodeURIComponent(val2);
+
+    row.appendChild(col1);
+    row.appendChild(col2);
+
+    return row;
 }
 

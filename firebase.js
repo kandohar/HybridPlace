@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.12.1/firebase-app.js";
-import { getDatabase, ref, get, set, child, onChildAdded, onChildChanged, increment } from "https://www.gstatic.com/firebasejs/9.12.1/firebase-database.js";
+import { getDatabase, ref, get, set, update, child, onChildAdded, onChildChanged, increment } from "https://www.gstatic.com/firebasejs/9.12.1/firebase-database.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDPGa9tystBypSl31xxmH-S1aQVs-mAbds",
@@ -55,9 +55,19 @@ export function writeServerTile(x, y, color, username) {
     showError(error);
   });
 
-  // increments stats
-  set(ref(db, 'stats/' + username), {
+  // increments click count
+  update(ref(db, 'stats/' + username), {
     clicks: increment(1)
+  }).catch((error => {
+    console.error(error);
+    showError(error);
+  }));
+}
+
+export function incConnectionCount(username) {
+  // increments connection count
+  update(ref(db, 'stats/' + username), {
+    connections: increment(1)
   }).catch((error => {
     console.error(error);
     showError(error);
