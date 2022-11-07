@@ -1,7 +1,7 @@
 import { drawServerTiles, incConnectionCount, writeServerTile } from "./firebase.js";
 
 // BEGIN SETTINGS
-const canvasWidth = 200;
+const canvasWidth = 150;
 const canvasHeight = 100;
 const defaultCanvasColor = "#FFFFFF";
 
