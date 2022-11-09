@@ -58,10 +58,11 @@ function initUser() {
         }
     } else {
         // no cookie, ask user, create cookie
-        let input = prompt("Username: (empty='anonymous')");
+        let input = prompt("Username:");
         if (input) {
             let safeInput = encodeURIComponent(input);
             username = safeInput;
+            // set cookie
             document.cookie = `${cookieName}${safeInput}; SameSite=strict; Max-Age=172800; Secure`;
         } else {
             username = "anonymous";
@@ -76,7 +77,7 @@ function initUser() {
 
     // init usernameReset button
     usernameResetElem.onclick = (_) => {
-        let input = prompt("Username: (empty='anonymous')");
+        let input = prompt("Username:");
         if (input) {
             let safeInput = encodeURIComponent(input);
             username = safeInput;
