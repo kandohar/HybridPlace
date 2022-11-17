@@ -1,16 +1,17 @@
 import { drawServerTiles, incConnectionCount, writeServerTile } from "./firebase.js";
 
 // BEGIN SETTINGS
-const canvasWidth = 150;
-const canvasHeight = 100;
+const canvasHeight = 150;
+const canvasWidth = Math.floor(canvasHeight * 1.5);
 const defaultCanvasColor = "#FFFFFF";
 
-const defaultZoom = 8;
+const initialZoom = 6;
 // END SETTINGS
 
 // displayed data, resizable
 const outputCanvas = document.getElementById("canvas");
 let outputCtxt;
+let currentZoom = initialZoom;
 
 // data linked to database
 let dataCanvas;
@@ -24,6 +25,8 @@ let requestDraw;
 let mousePos = { x: -1, y: -1 };
 
 const cookieName = "hybrid-place-username=";
+// 4 * 24 * 60 * 60
+const cookieMaxAge = "432000";
 let username = "anonymous";
 
 let pixelDrawnByData = [[]];
@@ -63,7 +66,7 @@ function initUser() {
             let safeInput = encodeURIComponent(input);
             username = safeInput;
             // set cookie
-            document.cookie = `${cookieName}${safeInput}; SameSite=strict; Max-Age=172800; Secure`;
+            document.cookie = `${cookieName}${safeInput}; SameSite=strict; Max-Age=${cookieMaxAge}; Secure`;
         } else {
             username = "anonymous";
         }
@@ -86,7 +89,7 @@ function initUser() {
         }
 
         // update cookie
-        document.cookie = `${cookieName}${username}; SameSite=strict; Max-Age=172800; Secure`;
+        document.cookie = `${cookieName}${username}; SameSite=strict; Max-Age=${cookieMaxAge}; Secure`;
         // update username display
         usernameValueElem.textContent = decodeURIComponent(username);
         // inc stats connection count
@@ -95,8 +98,8 @@ function initUser() {
 }
 
 function initOutputCanvas() {
-    outputCanvas.width = canvasWidth * defaultZoom;
-    outputCanvas.height = canvasHeight * defaultZoom;
+    outputCanvas.width = canvasWidth * currentZoom;
+    outputCanvas.height = canvasHeight * currentZoom;
     outputCtxt = outputCanvas.getContext("2d");
 
     // draw on click
@@ -240,15 +243,25 @@ function renderOutputCanvas() {
 }
 
 function zoomIn() {
-    outputCanvas.width = clamp(outputCanvas.width * 2, canvasWidth, 6400);
-    outputCanvas.height = clamp(outputCanvas.height * 2, canvasHeight, 6400);
+    currentZoom++;
+
+    // https://developer.mozilla.org/en-US/docs/Web/HTML/Element/canvas#maximum_canvas_size
+    // maximum canvas size of 6000 to avoid any unexpected behaviour
+    currentZoom = clamp(currentZoom, 1, Math.floor(6000 / canvasWidth));
+
+    outputCanvas.width = canvasWidth * currentZoom;
+    outputCanvas.height = canvasHeight * currentZoom;
 
     renderOutputCanvas();
 }
 
 function zoomOut() {
-    outputCanvas.width = clamp(outputCanvas.width * 0.5, canvasWidth, 6400);
-    outputCanvas.height = clamp(outputCanvas.height * 0.5, canvasHeight, 6400);
+    currentZoom--;
+
+    currentZoom = clamp(currentZoom, 1, Math.floor(6000 / canvasWidth));
+
+    outputCanvas.width = canvasWidth * currentZoom;
+    outputCanvas.height = canvasHeight * currentZoom;
 
     renderOutputCanvas();
 }
