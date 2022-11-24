@@ -5,7 +5,7 @@ const canvasHeight = 150;
 const canvasWidth = Math.floor(canvasHeight * 1.5);
 const defaultCanvasColor = "#FFFFFF";
 
-const initialZoom = 6;
+const initialZoom = 5;
 // END SETTINGS
 
 // displayed data, resizable
@@ -25,6 +25,7 @@ let requestDraw;
 let mousePos = { x: -1, y: -1 };
 
 const cookieName = "hybrid-place-username=";
+// day * hours * minutes * seconds
 // 4 * 24 * 60 * 60
 const cookieMaxAge = "432000";
 let username = "anonymous";

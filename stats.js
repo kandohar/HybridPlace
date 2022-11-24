@@ -20,7 +20,7 @@ getStats((tiles) => {
     }
 
     tilesDrawnByTableElem.appendChild(createTableRow("Total", Object.keys(tiles).length));
-    Object.entries(tilesCount).forEach(entry => {
+    Object.entries(tilesCount).sort(([,a], [,b]) => b-a).forEach(entry => {
         const [key, value] = entry;
         tilesDrawnByTableElem.appendChild(createTableRow(key, value));
     });
@@ -44,15 +44,16 @@ getStats((tiles) => {
     });
 
     statsConnectionsTableElem.appendChild(createTableRow("Total", sumConnections));
-    Object.entries(connectionsCount).forEach(entry => {
+    Object.entries(connectionsCount).sort(([,a], [,b]) => b-a).forEach(entry => {
         const [key, value] = entry;
         statsConnectionsTableElem.appendChild(createTableRow(key, value));
     });
 
     statsClicksTableElem.appendChild(createTableRow("Total", sumClicks));
-    Object.entries(clicksCount).forEach(entry => {
+    Object.entries(clicksCount).sort(([,a], [,b]) => b-a).forEach(entry => {
         const [key, value] = entry;
-        statsClicksTableElem.appendChild(createTableRow(key, value));
+        if(value != 0)
+            statsClicksTableElem.appendChild(createTableRow(key, value));
     });
 });
 
