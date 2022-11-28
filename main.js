@@ -1,11 +1,11 @@
 import { drawServerTiles, incConnectionCount, writeServerTile } from "./firebase.js";
 
 // BEGIN SETTINGS
-const canvasHeight = 150;
+const canvasHeight = 200;
 const canvasWidth = Math.floor(canvasHeight * 1.5);
 const defaultCanvasColor = "#FFFFFF";
 
-const initialZoom = 5;
+const initialZoom = 4;
 // END SETTINGS
 
 // displayed data, resizable
