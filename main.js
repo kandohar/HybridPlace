@@ -1,11 +1,11 @@
 import { drawServerTiles, incConnectionCount, writeServerTile } from "./firebase.js";
 
 // BEGIN SETTINGS
-const canvasHeight = 200;
+const canvasHeight = 300;
 const canvasWidth = Math.floor(canvasHeight * 1.5);
 const defaultCanvasColor = "#FFFFFF";
 
-const initialZoom = 4;
+const initialZoom = 3;
 // END SETTINGS
 
 // displayed data, resizable
@@ -50,6 +50,9 @@ initColorButtons();
 // then hide spinner and show canvas
 document.getElementById("loader").style.display = 'none';
 document.getElementById("loaded").style.display = 'block';
+
+// not exact
+// window.scrollTo(document.documentElement.scrollWidth / 2, document.documentElement.scrollHeight / 2);
 
 // INITS
 function initUser() {
