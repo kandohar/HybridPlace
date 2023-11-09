@@ -1,9 +1,9 @@
 :root {
-  --bg-color-1: #00635b;
-  --bg-color-2: #8d8111;
-  --bg-angle: 45deg;
+  --bg-color-1: #D02FC4;
+  --bg-color-2: #2FD03B;
+  --bg-angle: 135deg;
 
-  --bloom-color: #cccccc;
+  --bloom-color: white;
 
   --text-color: white;
   --text-bg: rgba(0, 0, 0, 0.5);

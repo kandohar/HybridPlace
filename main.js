@@ -1,16 +1,16 @@
 import { drawServerTiles, incConnectionCount, writeServerTile } from "./firebase.js";
 
 // BEGIN SETTINGS
-const canvasHeight = 200;
+const canvasHeight = 100;
 const canvasWidth = Math.floor(canvasHeight * 1.5);
 const defaultCanvasColor = "#FFFFFF";
 
-const initialZoom = 4;
+const initialZoom = 8;
 // END SETTINGS
 
 // displayed data, resizable
 const outputCanvas = document.getElementById("canvas");
-let outputCtxt;
+let outputContext;
 let currentZoom = initialZoom;
 
 // data linked to database
@@ -101,7 +101,7 @@ function initUser() {
 function initOutputCanvas() {
     outputCanvas.width = canvasWidth * currentZoom;
     outputCanvas.height = canvasHeight * currentZoom;
-    outputCtxt = outputCanvas.getContext("2d");
+    outputContext = outputCanvas.getContext("2d");
 
     // draw on click
     outputCanvas.onclick = e => {
@@ -172,10 +172,17 @@ function initZoomButtons() {
 
 function initColorPalette() {
 
-    colorPalette.push("#000000");
-    colorPalette.push("#7F7F7F");
-    colorPalette.push("#FFFFFF");
+    // black to dark grey
+    colorPalette.push(hslToHex(0, 0, 0));
+    colorPalette.push(hslToHex(0, 0, 100/5));
+    colorPalette.push(hslToHex(0, 0, 200/5));
 
+    // grey to white
+    colorPalette.push(hslToHex(0, 0, 300/5));
+    colorPalette.push(hslToHex(0, 0, 400/5));
+    colorPalette.push(hslToHex(0, 0, 100));
+
+    // rainbow
     for (let i = 0; i < 360; i += (360 / 14)) {
         var c = hslToHex(i, 100, 25); // dark color
         colorPalette.push(c);
@@ -218,27 +225,27 @@ function renderOutputCanvas() {
     requestAnimationFrame(() => {
         requestDraw = false
 
-        outputCtxt.imageSmoothingEnabled = false;
+        outputContext.imageSmoothingEnabled = false;
 
         // fill empty canvas
-        outputCtxt.fillStyle = defaultCanvasColor;
-        outputCtxt.fillRect(0, 0, outputCanvas.width, outputCanvas.height);
+        outputContext.fillStyle = defaultCanvasColor;
+        outputContext.fillRect(0, 0, outputCanvas.width, outputCanvas.height);
 
         // draw data canvas
-        outputCtxt.save();
+        outputContext.save();
         let widthScaleFactor = outputCanvas.width / canvasWidth;
         let heightScaleFactor = outputCanvas.height / canvasHeight;
-        outputCtxt.scale(widthScaleFactor, heightScaleFactor);
-        outputCtxt.drawImage(dataCanvas, 0, 0);
-        outputCtxt.restore();
+        outputContext.scale(widthScaleFactor, heightScaleFactor);
+        outputContext.drawImage(dataCanvas, 0, 0);
+        outputContext.restore();
 
         // draw pixel preview on cursor
         if (mousePos.x != -1 && mousePos.y != -1) {
-            outputCtxt.save();
-            outputCtxt.scale(widthScaleFactor, heightScaleFactor);
-            outputCtxt.fillStyle = currentColor;
-            outputCtxt.fillRect(mousePos.x, mousePos.y, 1, 1);
-            outputCtxt.restore();
+            outputContext.save();
+            outputContext.scale(widthScaleFactor, heightScaleFactor);
+            outputContext.fillStyle = currentColor;
+            outputContext.fillRect(mousePos.x, mousePos.y, 1, 1);
+            outputContext.restore();
         }
     });
 }
