@@ -1,16 +1,16 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.12.1/firebase-app.js";
-import { getDatabase, ref, get, set, update, child, onChildAdded, onChildChanged, increment } from "https://www.gstatic.com/firebasejs/9.12.1/firebase-database.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
+import { getDatabase, ref, get, set, update, child, onChildAdded, onChildChanged, increment } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-database.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDPGa9tystBypSl31xxmH-S1aQVs-mAbds",
-  authDomain: "hybridplace.firebaseapp.com",
-  projectId: "hybridplace",
-  storageBucket: "hybridplace.appspot.com",
-  messagingSenderId: "853594879874",
-  appId: "1:853594879874:web:45f154a729d4809d7f019b",
-  measurementId: "G-TBK52M6G0R",
-  databaseURL: "https://hybridplace-default-rtdb.europe-west1.firebasedatabase.app"
+  apiKey: "AIzaSyCpvRzItafGM5-_UrxnZc36hs0vk31Of9Q",
+  authDomain: "hybrid-place-2023.firebaseapp.com",
+  databaseURL: "https://hybrid-place-2023-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "hybrid-place-2023",
+  storageBucket: "hybrid-place-2023.appspot.com",
+  messagingSenderId: "1050196991060",
+  appId: "1:1050196991060:web:7baac65efd959b0d41e1c1"
 };
+
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
