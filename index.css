@@ -23,19 +23,6 @@ html {
   box-sizing: inherit;
 }
 
-#end-title {
-  margin: 0;
-  padding: 0;
-  padding-top: 20px;
-}
-
-#bottom-text {
-  margin: 0;
-  padding: 0;
-}
-
-
-
 /* USERNAME */
 
 #username {
@@ -178,7 +165,7 @@ html {
 /* LOADED */
 
 #loaded {
-  /*display: none;*/
+  display: none;
   min-width: 100%;
   width: fit-content;
   min-height: 100%;
@@ -196,7 +183,7 @@ html {
 
 
 #canvas {
-  /*cursor: crosshair;*/
+  cursor: crosshair;
   box-shadow: 0px 0px 40px 15px var(--bloom-color);
   margin-top: 30px;
   margin-bottom: 100px;

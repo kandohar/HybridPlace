@@ -11,11 +11,37 @@
 </head>
 
 <body>
-  <div id="loaded">
-    <h1 id="end-title">Thank you all for your contribution! Here is the final canvas of 20/01/2023 - 16:49. See you soon</h1>   
-    <h3 id="bottom-text">Click on the image to download the high resolution image</h3>
-    <a href="resources/hybridPlace_HD_2023-01-20.png" target="_blank"><img id="canvas" src="resources/hybridPlace_SD_2023-01-20.png"/></a>
+  <div id="loader">
+    <div id="spinner"></div>
+    <p>Loading...</p>
   </div>
+
+  <div id="loaded">
+    <canvas id="canvas"></canvas>
+
+    <div id="username"><span id="usernameValue">anonymous</span><button id="usernameReset">x</button></div>
+
+    <div id='colors'>
+    </div>
+
+    <div id='zoom'>
+      <div id='zoomin'><img src='resources/zoomIn.png'></div>
+      <div id='zoomout'><img src='resources/zoomOut.png'></div>
+    </div>
+
+    <div id='position'>(-1, -1)</div>
+
+    <div id='drawnBy'>Drawn by: <span id="drawnByValue"></span></div>
+
+    <div id='instruction'>Select color from left side, use the zoom from top-right corner (or CTRL+mousewheel), move
+      using arrow keys (or middle-click+drag), draw, enjoy.<br>
+      Deactivate any dark theme extension to get correct colors</div>
+
+  </div>
+
+  <div id="errorConsole"></div>
+
+  <script type="module" src="main.js"></script>
 </body>
 
 </html>
