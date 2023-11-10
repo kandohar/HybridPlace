@@ -1,11 +1,11 @@
 import { drawServerTiles, incConnectionCount, writeServerTile } from "./firebase.js";
 
 // BEGIN SETTINGS
-const canvasHeight = 100;
-const canvasWidth = Math.floor(canvasHeight * 1.5);
+const canvasHeight = 80;
+const canvasWidth = Math.floor(canvasHeight * (29.7 / 21.0)); // A4 ratio
 const defaultCanvasColor = "#FFFFFF";
 
-const initialZoom = 8;
+const initialZoom = 9;
 // END SETTINGS
 
 // displayed data, resizable
@@ -15,7 +15,7 @@ let currentZoom = initialZoom;
 
 // data linked to database
 let dataCanvas;
-let dataCtxt;
+let dataContext;
 
 let colorPalette = [];
 let colorButtons = [];
@@ -143,7 +143,7 @@ function initDataCanvas() {
     dataCanvas = document.createElement('canvas');
     dataCanvas.width = canvasWidth;
     dataCanvas.height = canvasHeight
-    dataCtxt = dataCanvas.getContext('2d')
+    dataContext = dataCanvas.getContext('2d')
 
     // get values from db
     drawServerTiles(setTile);
@@ -276,8 +276,8 @@ function zoomOut() {
 
 function setTile(x, y, color, username) {
     // update the data canvas
-    dataCtxt.fillStyle = color;
-    dataCtxt.fillRect(x, y, 1, 1);
+    dataContext.fillStyle = color;
+    dataContext.fillRect(x, y, 1, 1);
 
     if (pixelDrawnByData[x] == null)
         pixelDrawnByData[x] = [];
@@ -323,7 +323,7 @@ function hslToHex(h, s, l) {
 
 function isValidDraw(x, y, color) {
     // get current color on canvas
-    let targetPixelData = dataCtxt.getImageData(x, y, 1, 1).data;
+    let targetPixelData = dataContext.getImageData(x, y, 1, 1).data;
     let targetPixelColor = imageDataToRGB(targetPixelData);
 
     // if no pixel was already placed, the default valid is #000000 so allow it
