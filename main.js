@@ -5,7 +5,7 @@ const canvasHeight = 100;
 const canvasWidth = Math.floor(canvasHeight * (29.7 / 21.0)); // A4 ratio
 const defaultCanvasColor = "#FFFFFF";
 
-const initialZoom = 9;
+const initialZoom = 8;
 // END SETTINGS
 
 // displayed data, resizable
