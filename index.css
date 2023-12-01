@@ -1,7 +1,8 @@
 :root {
-  --bg-color-1: #D15C2E;
-  --bg-color-2: #2EA3D1;
-  --bg-angle: 80deg;
+  /* https://www.canva.com/colors/color-wheel/ */
+  --bg-color-1: #00FF7D;
+  --bg-color-2: #FF0082;
+  --bg-angle: 120deg;
 
   --bloom-color: white;
 
