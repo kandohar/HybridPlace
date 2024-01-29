@@ -1,5 +1,5 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html>
 
 <head>
   <title>Hybrid Place</title>
@@ -11,37 +11,18 @@
 </head>
 
 <body>
-  <div id="loader">
-    <div id="spinner"></div>
-    <p>Loading...</p>
-  </div>
-
-  <div id="loaded">
-    <canvas id="canvas"></canvas>
-
-    <div id="username"><span id="usernameValue">anonymous</span><button id="usernameReset">x</button></div>
-
-    <div id='colors'>
+  <div id="static-loaded">
+    <h1 id="static-title">HybridPlace history</h1>
+    <h3 id="static-bsubtitle">Click on the image to download the high resolution image</h3>
+    <div class="static-year-container">
+      <p class="static-year-title">29/01/2024 - 18h20</p>
+      <a href="resources/hybridPlace_HD_2024-01-29.png" target="_blank"><img class="static-year-canvas" src="resources/hybridPlace_SD_2024-01-29.png"/></a>
     </div>
-
-    <div id='zoom'>
-      <div id='zoomin'><img src='resources/zoomIn.png'></div>
-      <div id='zoomout'><img src='resources/zoomOut.png'></div>
+    <div class="static-year-container">
+      <p class="static-year-title">20/01/2023 - 16h49</p>
+      <a href="resources/hybridPlace_HD_2023-01-20.png" target="_blank"><img class="static-year-canvas" src="resources/hybridPlace_SD_2023-01-20.png"/></a>
     </div>
-
-    <div id='position'>(-1, -1)</div>
-
-    <div id='drawnBy'>Drawn by: <span id="drawnByValue"></span></div>
-
-    <div id='instruction'>Select color from left side, use the zoom from top-right corner (or CTRL+mousewheel), move
-      using arrow keys (or middle-click+drag), draw, enjoy.<br>
-      Deactivate any dark theme extension to get correct colors</div>
-
   </div>
-
-  <div id="errorConsole"></div>
-
-  <script type="module" src="main.js"></script>
 </body>
 
 </html>
