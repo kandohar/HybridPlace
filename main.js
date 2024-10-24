@@ -6,6 +6,8 @@ const canvasWidth = Math.floor(canvasHeight * (29.7 / 21.0)); // A4 ratio
 const defaultCanvasColor = "#FFFFFF";
 
 const initialZoom = 8;
+
+const exportZoomLevel = 8;
 // END SETTINGS
 
 // displayed data, resizable
@@ -189,14 +191,18 @@ function initColorPalette() {
     colorPalette.push(hslToHex(0, 0, 100));
 
     // rainbow
-    for (let i = 0; i < 360; i += (360 / 14)) {
-        var c = hslToHex(i, 100, 25); // dark color
+    let colors = 12;
+    for (let i = 0; i < colors; i++) {
+        let hue = (i * (360 / colors));
+        let c = hslToHex(hue, 100, 25); // dark color
         colorPalette.push(c);
-        var c = hslToHex(i, 100, 50); // base color
+        c = hslToHex(hue, 100, 50); // base color
         colorPalette.push(c);
-        var c = hslToHex(i, 100, 75); // light color
+        c = hslToHex(hue, 100, 75); // light color
         colorPalette.push(c);
     }
+
+
 }
 
 function initColorButtons() {
@@ -290,8 +296,8 @@ function zoomOut() {
 }
 
 function savePng() {
-    outputCanvas.width = canvasWidth * 4;
-    outputCanvas.height = canvasHeight * 4;
+    outputCanvas.width = canvasWidth * exportZoomLevel;
+    outputCanvas.height = canvasHeight * exportZoomLevel;
 
     renderOutputCanvas();
 
