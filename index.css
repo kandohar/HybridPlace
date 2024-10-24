@@ -41,6 +41,7 @@ html {
   margin-left: 5px;
   color: var(--text-color);
   background-color: var(--text-bg);
+  cursor: pointer;
 }
 
 /* COLORS */
@@ -64,15 +65,16 @@ html {
   border: 2px solid rgba(255, 255, 255, 0.4);
   border-radius: 10px;
   box-sizing: border-box;
+  cursor: pointer;
 }
 
 #colors>div.enabled {
   border: 4px white inset;
 }
 
-/* ZOOM */
+/* TOOLS */
 
-#zoom {
+#tools {
   position: fixed;
   top: 30px;
   right: 30px;
@@ -80,7 +82,7 @@ html {
   background-color: var(--text-bg);
 }
 
-#zoom>div {
+#tools>div {
   display: block;
   width: 50px;
   height: 50px;
@@ -88,8 +90,11 @@ html {
   background: transparent;
 }
 
-#zoomin>img,
-#zoomout>img {
+#tools>div.spacer {
+  height: 20px;
+}
+
+#tools img {
   width: 100%;
   height: 100%
 }
@@ -132,6 +137,10 @@ html {
   background: var(--text-bg);
 
   text-align: left;
+}
+
+#instruction > a {
+  color: white;
 }
 
 /* LOADER */
@@ -212,7 +221,7 @@ html {
   background: var(--text-bg);
 }
 
-/* Static end */
+/* HISTORY */
 #static-loaded {
   width: 100%;
   height: auto;
