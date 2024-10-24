@@ -26,6 +26,8 @@ let currentColor;
 let requestDraw;
 let mousePos = { x: -1, y: -1 };
 
+var pipetteMode = false;
+
 const cookieName = "hybrid-place-username=";
 // day * hours * minutes * seconds
 // 4 * 24 * 60 * 60
@@ -42,6 +44,9 @@ const positionElem = document.getElementById("position");
 const drawnByValueElem = document.getElementById("drawnByValue");
 const usernameValueElem = document.getElementById("usernameValue");
 const usernameResetElem = document.getElementById("usernameReset");
+
+var colorPickerElem;
+var colorPipetteElem;
 
 // init everything
 initUser();
@@ -112,8 +117,16 @@ function initOutputCanvas() {
     outputCanvas.onclick = e => {
         let pos = getLocalMousePosition(e);
 
-        if (isValidDraw(pos.x, pos.y, currentColor))
-            writeServerTile(pos.x, pos.y, currentColor, username);
+        if(pipetteMode) {
+            let canvasPixelColor = getCanvasPixelColor(pos.x, pos.y);
+            setCurrentColor(canvasPixelColor, colorPickerElem);
+            colorPickerElem.value = canvasPixelColor;
+
+            onColorPipetteClickEvent();
+        } else {
+            if (isValidDraw(pos.x, pos.y, currentColor))
+                writeServerTile(pos.x, pos.y, currentColor, username);
+        }
 
     };
 
@@ -201,8 +214,6 @@ function initColorPalette() {
         c = hslToHex(hue, 100, 75); // light color
         colorPalette.push(c);
     }
-
-
 }
 
 function initColorButtons() {
@@ -214,17 +225,55 @@ function initColorButtons() {
         let colorButton = document.createElement('div');
         colorButton.style.backgroundColor = color;
         colorButton.onclick = _ => {
-            currentColor = color;
-            colorButtons.forEach(cb => cb.classList.remove("enabled"));
-            colorButton.classList.add("enabled");
+            setCurrentColor(color, colorButton);
         };
 
         colorsElem.appendChild(colorButton);
         colorButtons.push(colorButton);
     }
 
+    // Add ColorPicker
+    colorPickerElem = document.createElement('input');
+    colorPickerElem.id = "colorPicker";
+    colorPickerElem.type = "color";
+    colorPickerElem.name = "colorPicker";
+    colorPickerElem.value = "#000000";
+    colorPickerElem.onclick = _ => setCurrentColor(colorPickerElem.value, colorPickerElem);
+    colorPickerElem.addEventListener("input", onColorPickerInputEvent, false);
+    colorsElem.appendChild(colorPickerElem);
+
+    // Add ColorPipette
+    colorPipetteElem = document.createElement('button');
+    colorPipetteElem.id = "colorPipette";
+    colorPipetteElem.onclick = onColorPipetteClickEvent;
+    colorsElem.appendChild(colorPipetteElem);
+
     // select the first color by default
     colorButtons[0].onclick();
+}
+
+function onColorPickerInputEvent(event) {
+    setCurrentColor(event.target.value, colorPickerElem);
+    colorPickerElem.value = event.target.value;
+}
+
+function onColorPipetteClickEvent() {
+    pipetteMode = !pipetteMode;
+
+    if(pipetteMode) {
+        colorPipetteElem.classList.add("enabled");
+    } else {
+        colorPipetteElem.classList.remove("enabled");
+    }
+}
+
+function setCurrentColor(color, elem) {
+    currentColor = color;
+
+    colorButtons.forEach(cb => cb.classList.remove("enabled"));
+    colorPickerElem.classList.remove("enabled");
+
+    elem.classList.add("enabled");
 }
 
 function initBackgroundColor() {
@@ -264,7 +313,12 @@ function renderOutputCanvas() {
         if (mousePos.x != -1 && mousePos.y != -1) {
             outputContext.save();
             outputContext.scale(widthScaleFactor, heightScaleFactor);
-            outputContext.fillStyle = currentColor;
+            if(pipetteMode) {
+                let canvasPixelColor = getCanvasPixelColor(mousePos.x, mousePos.y);
+                outputContext.fillStyle = canvasPixelColor;
+            } else {
+                outputContext.fillStyle = currentColor;
+            }
             outputContext.fillRect(mousePos.x, mousePos.y, 1, 1);
             outputContext.restore();
         }
@@ -360,18 +414,25 @@ function hslToHex(h, s, l) {
 
 function isValidDraw(x, y, color) {
     // get current color on canvas
-    let targetPixelData = dataContext.getImageData(x, y, 1, 1).data;
-    let targetPixelColor = imageDataToRGB(targetPixelData);
+    let canvasPixelColor = getCanvasPixelColor(x, y);
 
-    // if no pixel was already placed, the default valid is #000000 so allow it
-    if (targetPixelColor.toLowerCase() == "#000000")
+    // if no pixel was already placed (the default valid is #000000), allow it
+    if (canvasPixelColor.toLowerCase() == "#000000") {
         return true;
+    }
 
     // check canvas pixel != desired pixel
-    if (targetPixelColor.toLowerCase() != color.toLowerCase())
+    if (canvasPixelColor.toLowerCase() != color.toLowerCase())
         return true;
 
     return false;
+}
+
+function getCanvasPixelColor(x, y) {
+    // get current color on canvas
+    let targetPixelData = dataContext.getImageData(x, y, 1, 1).data;
+    let targetPixelColor = imageDataToRGB(targetPixelData);
+    return targetPixelColor;
 }
 
 function imageDataToRGB(data) {
