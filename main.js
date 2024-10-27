@@ -1,4 +1,4 @@
-import { drawServerTiles, incConnectionCount, writeServerTile } from "./firebase.js";
+import { drawServerTiles, writeServerTile, incConnectionCount, uploadImage, isSnapshotOld } from "./firebase.js";
 
 // BEGIN SETTINGS
 const canvasHeight = 100;
@@ -7,7 +7,7 @@ const defaultCanvasColor = "#FFFFFF";
 
 const initialZoom = 8;
 
-const exportZoomLevel = 8;
+const exportPixelSize = 8;
 // END SETTINGS
 
 // displayed data, resizable
@@ -40,6 +40,7 @@ const zoomInElem = document.getElementById("zoomin");
 const zoomOutElem = document.getElementById("zoomout");
 const saveElem = document.getElementById("save");
 const saveLinkElem = document.getElementById("saveLink");
+const uploadElem = document.getElementById("upload");
 const positionElem = document.getElementById("position");
 const drawnByValueElem = document.getElementById("drawnByValue");
 const usernameValueElem = document.getElementById("usernameValue");
@@ -60,6 +61,9 @@ initBackgroundColor();
 // then hide spinner and show canvas
 document.getElementById("loader").style.display = 'none';
 document.getElementById("loaded").style.display = 'block';
+
+// wait for data to load and try upload snapshot
+setTimeout(tryUploadSnapshot, 100);
 
 // INITS
 function initUser() {
@@ -168,15 +172,10 @@ function initDataCanvas() {
 }
 
 function initToolsButtons() {
-    zoomInElem.onclick = _ => {
-        zoomIn();
-    };
-    zoomOutElem.onclick = _ => {
-        zoomOut();
-    };
-    saveElem.onclick = _ => {
-        savePng();
-    };
+    zoomInElem.onclick = _ => zoomIn();
+    zoomOutElem.onclick = _ => zoomOut();
+    saveElem.onclick = _ => savePng();
+    uploadElem.onclick = _ => uploadPng();
 
     // cancel CTRL+wheel browser zoom, instead apply custom zoom
     window.addEventListener('wheel', (e) => {
@@ -277,11 +276,18 @@ function setCurrentColor(color, elem) {
 }
 
 function initBackgroundColor() {
-    let root = document.querySelector(':root');
-    let hue = Math.floor(Math.random() * 360);
-    let rotation = Math.floor(Math.random() * 180);
-    root.style.setProperty('--bg-color-1', hslToHex(hue, 100, 60));
-    root.style.setProperty('--bg-color-2', hslToHex((hue + 180) % 360, 100, 60));
+    const root = document.querySelector(':root');
+
+    const hue = Math.floor(Math.random() * 360);
+    root.style.setProperty('--bg-color-1', hslToHex(hue, 100, 70));
+
+    // complementary color
+    //root.style.setProperty('--bg-color-2', hslToHex((hue + 180) % 360, 100, 60));
+    // OR random color
+    const hue2 = Math.floor(Math.random() * 360);
+    root.style.setProperty('--bg-color-2', hslToHex(hue2, 100, 70));
+
+    const rotation = Math.floor(Math.random() * 180);
     root.style.setProperty('--bg-angle', `${rotation}deg`);
 }
 
@@ -334,7 +340,6 @@ function zoomIn() {
 
     outputCanvas.width = canvasWidth * currentZoom;
     outputCanvas.height = canvasHeight * currentZoom;
-
     renderOutputCanvas();
 }
 
@@ -345,24 +350,50 @@ function zoomOut() {
 
     outputCanvas.width = canvasWidth * currentZoom;
     outputCanvas.height = canvasHeight * currentZoom;
-
     renderOutputCanvas();
 }
 
 function savePng() {
-    outputCanvas.width = canvasWidth * exportZoomLevel;
-    outputCanvas.height = canvasHeight * exportZoomLevel;
-
+    outputCanvas.width = canvasWidth * exportPixelSize;
+    outputCanvas.height = canvasHeight * exportPixelSize;
     renderOutputCanvas();
 
     setTimeout(savePngHandler);
 }
 
-function savePngHandler()
-{
+function savePngHandler() {
     saveLinkElem.setAttribute('download', 'canvas.png');
-    saveLinkElem.setAttribute('href', outputCanvas.toDataURL("image/png").replace("image/png", "image/octet-stream"));
-    saveLinkElem.click();
+    saveLinkElem.setAttribute('href', outputCanvas.toDataURL("image/png", 1).replace("image/png", "image/octet-stream"));
+    saveLinkElem.click();    
+
+    // restore zoom level
+    outputCanvas.width = canvasWidth * currentZoom;
+    outputCanvas.height = canvasHeight * currentZoom;
+    renderOutputCanvas();
+}
+
+function tryUploadSnapshot() {
+    // check if the last uploaded snapshot is outdated
+    isSnapshotOld(uploadPng);
+}
+
+function uploadPng() {
+    outputCanvas.width = canvasWidth * exportPixelSize;
+    outputCanvas.height = canvasHeight * exportPixelSize;
+    renderOutputCanvas();
+
+    setTimeout(uploadPngHandler);
+}
+
+function uploadPngHandler() {
+    outputCanvas.toBlob((blob) => {
+        uploadImage(blob);
+    }, "image/png", 1);
+
+    // restore zoom level
+    outputCanvas.width = canvasWidth * currentZoom;
+    outputCanvas.height = canvasHeight * currentZoom;
+    renderOutputCanvas();
 }
 
 function setTile(x, y, color, username) {
