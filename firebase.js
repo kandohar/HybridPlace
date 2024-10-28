@@ -112,13 +112,15 @@ export function isSnapshotOld(uploadSnapshotCallback) {
         // console.debug(Math.floor(difference / 3600000)); // hours
         // console.debug(Math.floor(difference / 60000)); // minutes
         // console.debug(Math.floor(difference / 1000)); // seconds
+
+        const threshold = 3;
         
         const difference = Date.now() - values["lastUploadedSnapshotTime"]; // in ms
-        if(Math.floor(difference / 3600000) >= 1 && values["lastPlacedPixelTime"] > values["lastUploadedSnapshotTime"]) {
+        if(Math.floor(difference / 3600000) >= threshold && values["lastPlacedPixelTime"] > values["lastUploadedSnapshotTime"]) {
           console.debug("try upload snapshot");
           uploadSnapshotCallback();
         } else {
-          console.debug("snapshot not needed");
+          console.debug(`snapshot not needed : ${(difference / 3600000).toFixed(2)} < ${threshold}`);
         }
       }
     } else {
@@ -152,7 +154,7 @@ export function uploadImage(image) {
 }
 
 function showError(error, extra = "") {
-  console.error(error . extra);
+  console.error(`${error} - ${extra}`);
 
   documentErrorConsole.innerHTML += error + "<br>";
   documentErrorConsole.style.display = "block";
