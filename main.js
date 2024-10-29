@@ -121,7 +121,7 @@ function initOutputCanvas() {
     outputCanvas.onclick = e => {
         let pos = getLocalMousePosition(e);
 
-        if(pipetteMode) {
+        if (pipetteMode) {
             let canvasPixelColor = getCanvasPixelColor(pos.x, pos.y);
             setCurrentColor(canvasPixelColor, colorPickerElem);
             colorPickerElem.value = canvasPixelColor;
@@ -131,8 +131,24 @@ function initOutputCanvas() {
             if (isValidDraw(pos.x, pos.y, currentColor))
                 writeServerTile(pos.x, pos.y, currentColor, username);
         }
-
     };
+
+    // right click
+    // cancel pipette or draw white pixel
+    outputCanvas.addEventListener('contextmenu', e => {
+        e.preventDefault();
+
+        let pos = getLocalMousePosition(e);
+
+        if (pipetteMode) {
+            onColorPipetteClickEvent();
+        } else {
+            if (isValidDraw(pos.x, pos.y, '#FFFFFF'))
+                writeServerTile(pos.x, pos.y, '#FFFFFF', username);
+        }
+
+        return false;
+    }, false);
 
     // update position & drawnBy values
     outputCanvas.onmousemove = e => {
@@ -191,15 +207,14 @@ function initToolsButtons() {
 }
 
 function initColorPalette() {
-
     // black to dark grey
     colorPalette.push(hslToHex(0, 0, 0));
-    colorPalette.push(hslToHex(0, 0, 100/5));
-    colorPalette.push(hslToHex(0, 0, 200/5));
+    colorPalette.push(hslToHex(0, 0, 100 / 5));
+    colorPalette.push(hslToHex(0, 0, 200 / 5));
 
     // grey to white
-    colorPalette.push(hslToHex(0, 0, 300/5));
-    colorPalette.push(hslToHex(0, 0, 400/5));
+    colorPalette.push(hslToHex(0, 0, 300 / 5));
+    colorPalette.push(hslToHex(0, 0, 400 / 5));
     colorPalette.push(hslToHex(0, 0, 100));
 
     // rainbow
@@ -259,7 +274,7 @@ function onColorPickerInputEvent(event) {
 function onColorPipetteClickEvent() {
     pipetteMode = !pipetteMode;
 
-    if(pipetteMode) {
+    if (pipetteMode) {
         colorPipetteElem.classList.add("enabled");
     } else {
         colorPipetteElem.classList.remove("enabled");
@@ -282,10 +297,10 @@ function initBackgroundColor() {
     root.style.setProperty('--bg-color-1', hslToHex(hue, 100, 70));
 
     // complementary color
-    //root.style.setProperty('--bg-color-2', hslToHex((hue + 180) % 360, 100, 60));
+    root.style.setProperty('--bg-color-2', hslToHex((hue + 180) % 360, 100, 60));
     // OR random color
-    const hue2 = Math.floor(Math.random() * 360);
-    root.style.setProperty('--bg-color-2', hslToHex(hue2, 100, 70));
+    //const hue2 = Math.floor(Math.random() * 360);
+    //root.style.setProperty('--bg-color-2', hslToHex(hue2, 100, 70));
 
     const rotation = Math.floor(Math.random() * 180);
     root.style.setProperty('--bg-angle', `${rotation}deg`);
@@ -319,7 +334,7 @@ function renderOutputCanvas() {
         if (mousePos.x != -1 && mousePos.y != -1) {
             outputContext.save();
             outputContext.scale(widthScaleFactor, heightScaleFactor);
-            if(pipetteMode) {
+            if (pipetteMode) {
                 let canvasPixelColor = getCanvasPixelColor(mousePos.x, mousePos.y);
                 outputContext.fillStyle = canvasPixelColor;
             } else {
@@ -364,7 +379,7 @@ function savePng() {
 function savePngHandler() {
     saveLinkElem.setAttribute('download', 'canvas.png');
     saveLinkElem.setAttribute('href', outputCanvas.toDataURL("image/png", 1).replace("image/png", "image/octet-stream"));
-    saveLinkElem.click();    
+    saveLinkElem.click();
 
     // restore zoom level
     outputCanvas.width = canvasWidth * currentZoom;

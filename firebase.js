@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
 import { getDatabase, ref as ref_db, get, set, update, child, onChildAdded, onChildChanged, increment } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
-import { getStorage,  ref as ref_storage, uploadBytes } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-storage.js";
+import { getStorage, ref as ref_storage, uploadBytes } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-storage.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBiqo_XSSCnF2o-DzouZumawr132boghKg",
@@ -106,17 +106,17 @@ export function getStats(callbackTiles, callbackStats) {
 
 export function isSnapshotOld(uploadSnapshotCallback) {
   get(ref_db(db, "logs/")).then((snapshot) => {
-    if(snapshot.exists()) {
+    if (snapshot.exists()) {
       const values = snapshot.val();
-      if(values.hasOwnProperty("lastUploadedSnapshotTime") && values.hasOwnProperty("lastPlacedPixelTime")) {
+      if (values.hasOwnProperty("lastUploadedSnapshotTime") && values.hasOwnProperty("lastPlacedPixelTime")) {
         // console.debug(Math.floor(difference / 3600000)); // hours
         // console.debug(Math.floor(difference / 60000)); // minutes
         // console.debug(Math.floor(difference / 1000)); // seconds
 
         const threshold = 3;
-        
+
         const difference = Date.now() - values["lastUploadedSnapshotTime"]; // in ms
-        if(Math.floor(difference / 3600000) >= threshold && values["lastPlacedPixelTime"] > values["lastUploadedSnapshotTime"]) {
+        if (Math.floor(difference / 3600000) >= threshold && values["lastPlacedPixelTime"] > values["lastUploadedSnapshotTime"]) {
           console.debug("try upload snapshot");
           uploadSnapshotCallback();
         } else {

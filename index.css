@@ -171,8 +171,8 @@ html {
 
 #instruction {
   position: fixed;
-  bottom: 30px;
-  right: 30px;
+  bottom: 10px;
+  right: 10px;
   padding: 3px;
 
   color: var(--text-color);
@@ -181,7 +181,7 @@ html {
   text-align: left;
 }
 
-#instruction > a {
+#instruction>a {
   color: white;
 }
 
@@ -275,7 +275,7 @@ html {
   background: linear-gradient(var(--bg-angle), var(--bg-color-1), var(--bg-color-2));
   /* Chrome 10-25, Safari 5.1-6 */
   background: -webkit-linear-gradient(var(--bg-angle), var(--bg-color-1), var(--bg-color-2));
-  
+
   background-attachment: fixed;
 
   text-align: center;
@@ -308,4 +308,3 @@ html {
   height: auto;
   box-shadow: 0px 0px 40px 15px var(--bloom-color);
 }
-
