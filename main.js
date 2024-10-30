@@ -30,8 +30,8 @@ var pipetteMode = false;
 
 const cookieName = "hybrid-place-username=";
 // day * hours * minutes * seconds
-// 4 * 24 * 60 * 60
-const cookieMaxAge = "432000";
+// 10 * 24 * 60 * 60
+const cookieMaxAge = "864000";
 let username = "anonymous";
 
 let pixelDrawnByData = [[]];
@@ -119,10 +119,10 @@ function initOutputCanvas() {
 
     // draw on click
     outputCanvas.onclick = e => {
-        let pos = getLocalMousePosition(e);
+        const pos = getLocalMousePosition(e);
 
         if (pipetteMode) {
-            let canvasPixelColor = getCanvasPixelColor(pos.x, pos.y);
+            const canvasPixelColor = getCanvasPixelColor(pos.x, pos.y);
             setCurrentColor(canvasPixelColor, colorPickerElem);
             colorPickerElem.value = canvasPixelColor;
 
@@ -134,17 +134,18 @@ function initOutputCanvas() {
     };
 
     // right click
-    // cancel pipette or draw white pixel
     outputCanvas.addEventListener('contextmenu', e => {
         e.preventDefault();
 
-        let pos = getLocalMousePosition(e);
+        const pos = getLocalMousePosition(e);
 
         if (pipetteMode) {
+            // cancel pipette
             onColorPipetteClickEvent();
         } else {
-            if (isValidDraw(pos.x, pos.y, '#FFFFFF'))
-                writeServerTile(pos.x, pos.y, '#FFFFFF', username);
+            // draw white pixel
+            if (isValidDraw(pos.x, pos.y, defaultCanvasColor))
+                writeServerTile(pos.x, pos.y, defaultCanvasColor, username);
         }
 
         return false;
@@ -152,7 +153,7 @@ function initOutputCanvas() {
 
     // update position & drawnBy values
     outputCanvas.onmousemove = e => {
-        let pos = getLocalMousePosition(e);
+        const pos = getLocalMousePosition(e);
 
         positionElem.textContent = `(${pos.x}, ${pos.y})`;
 
@@ -166,6 +167,7 @@ function initOutputCanvas() {
         mousePos.y = pos.y;
         renderOutputCanvas();
     };
+
     outputCanvas.onmouseleave = _ => {
         positionElem.textContent = `(-1, -1)`;
 
@@ -175,6 +177,18 @@ function initOutputCanvas() {
         mousePos.y = -1;
         renderOutputCanvas();
     }
+
+    // cancel CTRL+wheel browser zoom, instead apply custom zoom
+    window.addEventListener('wheel', (e) => {
+        if (e.ctrlKey) {
+            if (e.deltaY < 0) {
+                zoomIn();
+            } else if (e.deltaY > 0) {
+                zoomOut();
+            }
+            e.preventDefault();
+        }
+    }, { passive: false });
 }
 
 function initDataCanvas() {
@@ -192,18 +206,6 @@ function initToolsButtons() {
     zoomOutElem.onclick = _ => zoomOut();
     saveElem.onclick = _ => savePng();
     uploadElem.onclick = _ => uploadPng();
-
-    // cancel CTRL+wheel browser zoom, instead apply custom zoom
-    window.addEventListener('wheel', (e) => {
-        if (e.ctrlKey) {
-            if (e.deltaY < 0) {
-                zoomIn();
-            } else if (e.deltaY > 0) {
-                zoomOut();
-            }
-            e.preventDefault();
-        }
-    }, { passive: false });
 }
 
 function initColorPalette() {
@@ -218,9 +220,9 @@ function initColorPalette() {
     colorPalette.push(hslToHex(0, 0, 100));
 
     // rainbow
-    let colors = 12;
+    const colors = 12;
     for (let i = 0; i < colors; i++) {
-        let hue = (i * (360 / colors));
+        const hue = (i * (360 / colors));
         let c = hslToHex(hue, 100, 25); // dark color
         colorPalette.push(c);
         c = hslToHex(hue, 100, 50); // base color
@@ -232,11 +234,11 @@ function initColorPalette() {
 
 function initColorButtons() {
     // for each color in colorPalette, creates a corresponding button
-    let colorsElem = document.getElementById("colors");
+    const colorsElem = document.getElementById("colors");
 
     for (let i in colorPalette) {
-        let color = colorPalette[i];
-        let colorButton = document.createElement('div');
+        const color = colorPalette[i];
+        const colorButton = document.createElement('div');
         colorButton.style.backgroundColor = color;
         colorButton.onclick = _ => {
             setCurrentColor(color, colorButton);
@@ -296,11 +298,8 @@ function initBackgroundColor() {
     const hue = Math.floor(Math.random() * 360);
     root.style.setProperty('--bg-color-1', hslToHex(hue, 100, 70));
 
-    // complementary color
-    root.style.setProperty('--bg-color-2', hslToHex((hue + 180) % 360, 100, 60));
-    // OR random color
-    //const hue2 = Math.floor(Math.random() * 360);
-    //root.style.setProperty('--bg-color-2', hslToHex(hue2, 100, 70));
+    const hue2 = Math.floor(Math.random() * 360);
+    root.style.setProperty('--bg-color-2', hslToHex(hue2, 100, 70));
 
     const rotation = Math.floor(Math.random() * 180);
     root.style.setProperty('--bg-angle', `${rotation}deg`);
@@ -314,8 +313,6 @@ function renderOutputCanvas() {
 
     requestDraw = true
     requestAnimationFrame(() => {
-        requestDraw = false
-
         outputContext.imageSmoothingEnabled = false;
 
         // fill empty canvas
@@ -324,8 +321,8 @@ function renderOutputCanvas() {
 
         // draw data canvas
         outputContext.save();
-        let widthScaleFactor = outputCanvas.width / canvasWidth;
-        let heightScaleFactor = outputCanvas.height / canvasHeight;
+        const widthScaleFactor = outputCanvas.width / canvasWidth;
+        const heightScaleFactor = outputCanvas.height / canvasHeight;
         outputContext.scale(widthScaleFactor, heightScaleFactor);
         outputContext.drawImage(dataCanvas, 0, 0);
         outputContext.restore();
@@ -335,7 +332,7 @@ function renderOutputCanvas() {
             outputContext.save();
             outputContext.scale(widthScaleFactor, heightScaleFactor);
             if (pipetteMode) {
-                let canvasPixelColor = getCanvasPixelColor(mousePos.x, mousePos.y);
+                const canvasPixelColor = getCanvasPixelColor(mousePos.x, mousePos.y);
                 outputContext.fillStyle = canvasPixelColor;
             } else {
                 outputContext.fillStyle = currentColor;
@@ -343,6 +340,8 @@ function renderOutputCanvas() {
             outputContext.fillRect(mousePos.x, mousePos.y, 1, 1);
             outputContext.restore();
         }
+
+        requestDraw = false
     });
 }
 
@@ -353,9 +352,7 @@ function zoomIn() {
     // maximum canvas size of 6000 to avoid any unexpected behaviour
     currentZoom = clamp(currentZoom, 1, Math.floor(6000 / canvasWidth));
 
-    outputCanvas.width = canvasWidth * currentZoom;
-    outputCanvas.height = canvasHeight * currentZoom;
-    renderOutputCanvas();
+    resizeCanvas(currentZoom);
 }
 
 function zoomOut() {
@@ -363,15 +360,11 @@ function zoomOut() {
 
     currentZoom = clamp(currentZoom, 1, Math.floor(6000 / canvasWidth));
 
-    outputCanvas.width = canvasWidth * currentZoom;
-    outputCanvas.height = canvasHeight * currentZoom;
-    renderOutputCanvas();
+    resizeCanvas(currentZoom);
 }
 
 function savePng() {
-    outputCanvas.width = canvasWidth * exportPixelSize;
-    outputCanvas.height = canvasHeight * exportPixelSize;
-    renderOutputCanvas();
+    resizeCanvas(exportPixelSize);
 
     setTimeout(savePngHandler);
 }
@@ -382,9 +375,7 @@ function savePngHandler() {
     saveLinkElem.click();
 
     // restore zoom level
-    outputCanvas.width = canvasWidth * currentZoom;
-    outputCanvas.height = canvasHeight * currentZoom;
-    renderOutputCanvas();
+    resizeCanvas(currentZoom);
 }
 
 function tryUploadSnapshot() {
@@ -393,9 +384,7 @@ function tryUploadSnapshot() {
 }
 
 function uploadPng() {
-    outputCanvas.width = canvasWidth * exportPixelSize;
-    outputCanvas.height = canvasHeight * exportPixelSize;
-    renderOutputCanvas();
+    resizeCanvas(exportPixelSize);
 
     setTimeout(uploadPngHandler);
 }
@@ -406,9 +395,7 @@ function uploadPngHandler() {
     }, "image/png", 1);
 
     // restore zoom level
-    outputCanvas.width = canvasWidth * currentZoom;
-    outputCanvas.height = canvasHeight * currentZoom;
-    renderOutputCanvas();
+    resizeCanvas(currentZoom);
 }
 
 function setTile(x, y, color, username) {
@@ -425,9 +412,9 @@ function setTile(x, y, color, username) {
 
 function getLocalMousePosition(e) {
     // convert window mouse position into data canvas mouse position
-    let rect = outputCanvas.getBoundingClientRect();
-    var x = e.clientX - rect.left;
-    var y = e.clientY - rect.top;
+    const rect = outputCanvas.getBoundingClientRect();
+    let x = e.clientX - rect.left;
+    let y = e.clientY - rect.top;
 
     let widthScaleFactor = outputCanvas.width / canvasWidth;
     let heightScaleFactor = outputCanvas.height / canvasHeight;
@@ -445,6 +432,12 @@ function getLocalMousePosition(e) {
 }
 
 // UTILS
+function resizeCanvas(scale) {
+    outputCanvas.width = canvasWidth * scale;
+    outputCanvas.height = canvasHeight * scale;
+    renderOutputCanvas();
+}
+
 const clamp = (x, min, max) => Math.max(Math.min(x, max), min);
 
 function hslToHex(h, s, l) {
@@ -460,7 +453,7 @@ function hslToHex(h, s, l) {
 
 function isValidDraw(x, y, color) {
     // get current color on canvas
-    let canvasPixelColor = getCanvasPixelColor(x, y);
+    const canvasPixelColor = getCanvasPixelColor(x, y);
 
     // if no pixel was already placed (the default valid is #000000), allow it
     if (canvasPixelColor.toLowerCase() == "#000000") {
@@ -476,17 +469,17 @@ function isValidDraw(x, y, color) {
 
 function getCanvasPixelColor(x, y) {
     // get current color on canvas
-    let targetPixelData = dataContext.getImageData(x, y, 1, 1).data;
-    let targetPixelColor = imageDataToRGB(targetPixelData);
+    const targetPixelData = dataContext.getImageData(x, y, 1, 1).data;
+    const targetPixelColor = imageDataToRGB(targetPixelData);
     return targetPixelColor;
 }
 
 function imageDataToRGB(data) {
-    let r = data[0];
-    let g = data[1];
-    let b = data[2];
+    const r = data[0];
+    const g = data[1];
+    const b = data[2];
 
-    let rgb = "#" + ("000000" + (((r << 16) | (g << 8) | b).toString(16))).slice(-6);
+    const rgb = "#" + ("000000" + (((r << 16) | (g << 8) | b).toString(16))).slice(-6);
 
     return rgb;
 }
