@@ -30,16 +30,17 @@
       <div class="spacer"></div>
       <div id='save' style="cursor: pointer;"><img src="resources/save.png"></div>
       <a style="display: none;" id="saveLink"></a>
-      <div style="display: none;" id='upload' style="cursor: pointer;"><img src="resources/upload.png"></div>
     </div>
 
     <div id='position'>(-1, -1)</div>
 
-    <div id='drawnBy'>Drawn by: <span id="drawnByValue"></span></div>
+    <div id='drawnBy'>Draw by: <span id="drawnByValue"></span></div>
 
-    <div id='instruction'>Select color from left side, use the zoom from top-right corner (or CTRL+mousewheel), move
-      using arrow keys (or middle-click+drag), draw, enjoy!<br>
-      Right-click to place a white pixel<br>
+    <div id='instruction'>
+      <button id='instructionCloseBtn'>x</button>
+      Select color from palette, use the color picker, or the pipette tool (or space bar to copy pixel under cursor)<br>
+      Left-click to place a pixel of the selected color, Right-click to place a white pixel<br>
+      Zoom using top-right corner buttons (or CTRL+mousewheel), move using arrow keys (or middle-click+drag)<br>
       Deactivate any dark theme browser extension to get correct colors<br>
       To see previous years canvas: <a href="history.html">History</a>
     </div>

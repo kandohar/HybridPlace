@@ -24,6 +24,12 @@ html {
   box-sizing: inherit;
 }
 
+button {
+  color: var(--text-color);
+  background-color: var(--text-bg);
+  cursor: pointer;
+}
+
 /* USERNAME */
 
 #username {
@@ -39,9 +45,6 @@ html {
 
 #usernameReset {
   margin-left: 5px;
-  color: var(--text-color);
-  background-color: var(--text-bg);
-  cursor: pointer;
 }
 
 /* COLORS */
@@ -185,6 +188,12 @@ html {
   color: white;
 }
 
+#instructionCloseBtn {
+  position: absolute;
+  top: calc(-1em - 9px);
+  right: 0px;
+}
+
 /* LOADER */
 
 #loader {
@@ -241,6 +250,10 @@ html {
   margin-bottom: 100px;
   margin-left: 150px;
   margin-right: 100px;
+}
+
+#canvas.pipette {
+  cursor: url(resources/pipetteCursor.png), auto;
 }
 
 /* ERROR CONSOLE */

@@ -40,11 +40,12 @@ const zoomInElem = document.getElementById("zoomin");
 const zoomOutElem = document.getElementById("zoomout");
 const saveElem = document.getElementById("save");
 const saveLinkElem = document.getElementById("saveLink");
-const uploadElem = document.getElementById("upload");
 const positionElem = document.getElementById("position");
 const drawnByValueElem = document.getElementById("drawnByValue");
 const usernameValueElem = document.getElementById("usernameValue");
 const usernameResetElem = document.getElementById("usernameReset");
+const instructionElem = document.getElementById("instruction");
+const instructionCloseBtnElem = document.getElementById("instructionCloseBtn");
 
 var colorPickerElem;
 var colorPipetteElem;
@@ -119,17 +120,15 @@ function initOutputCanvas() {
 
     // draw on click
     outputCanvas.onclick = e => {
-        const pos = getLocalMousePosition(e);
-
         if (pipetteMode) {
-            const canvasPixelColor = getCanvasPixelColor(pos.x, pos.y);
+            const canvasPixelColor = getCanvasPixelColor(mousePos.x, mousePos.y);
             setCurrentColor(canvasPixelColor, colorPickerElem);
             colorPickerElem.value = canvasPixelColor;
 
             onColorPipetteClickEvent();
         } else {
-            if (isValidDraw(pos.x, pos.y, currentColor))
-                writeServerTile(pos.x, pos.y, currentColor, username);
+            if (isValidDraw(mousePos.x, mousePos.y, currentColor))
+                writeServerTile(mousePos.x, mousePos.y, currentColor, username);
         }
     };
 
@@ -137,19 +136,30 @@ function initOutputCanvas() {
     outputCanvas.addEventListener('contextmenu', e => {
         e.preventDefault();
 
-        const pos = getLocalMousePosition(e);
-
         if (pipetteMode) {
             // cancel pipette
             onColorPipetteClickEvent();
         } else {
             // draw white pixel
-            if (isValidDraw(pos.x, pos.y, defaultCanvasColor))
-                writeServerTile(pos.x, pos.y, defaultCanvasColor, username);
+            if (isValidDraw(mousePos.x, mousePos.y, defaultCanvasColor))
+                writeServerTile(mousePos.x, mousePos.y, defaultCanvasColor, username);
         }
 
         return false;
     }, false);
+
+    document.addEventListener('keydown', e => {
+        // space bar pressed
+        if (e.code === 'Space') {
+            e.preventDefault();
+
+            if (mousePos.x != -1 && mousePos.y != -1) {
+                const canvasPixelColor = getCanvasPixelColor(mousePos.x, mousePos.y);
+                setCurrentColor(canvasPixelColor, colorPickerElem);
+                colorPickerElem.value = canvasPixelColor;
+            }
+        }
+    });
 
     // update position & drawnBy values
     outputCanvas.onmousemove = e => {
@@ -205,31 +215,64 @@ function initToolsButtons() {
     zoomInElem.onclick = _ => zoomIn();
     zoomOutElem.onclick = _ => zoomOut();
     saveElem.onclick = _ => savePng();
-    uploadElem.onclick = _ => uploadPng();
+
+    instructionCloseBtnElem.onclick = _ => closeInstruction();
 }
 
 function initColorPalette() {
     // black to dark grey
-    colorPalette.push(hslToHex(0, 0, 0));
-    colorPalette.push(hslToHex(0, 0, 100 / 5));
-    colorPalette.push(hslToHex(0, 0, 200 / 5));
+    colorPalette.push(hslToHtml(0, 0, 0));
+    colorPalette.push(hslToHtml(0, 0, 100 / 5));
+    colorPalette.push(hslToHtml(0, 0, 200 / 5));
 
     // grey to white
-    colorPalette.push(hslToHex(0, 0, 300 / 5));
-    colorPalette.push(hslToHex(0, 0, 400 / 5));
-    colorPalette.push(hslToHex(0, 0, 100));
+    colorPalette.push(hslToHtml(0, 0, 300 / 5));
+    colorPalette.push(hslToHtml(0, 0, 400 / 5));
+    colorPalette.push(hslToHtml(0, 0, 100));
 
-    // rainbow
     const colors = 12;
+
+    // HSL
     for (let i = 0; i < colors; i++) {
         const hue = (i * (360 / colors));
-        let c = hslToHex(hue, 100, 25); // dark color
+        let c = hslToHtml(hue, 100, 25); // dark color
         colorPalette.push(c);
-        c = hslToHex(hue, 100, 50); // base color
+        c = hslToHtml(hue, 100, 50); // base color
         colorPalette.push(c);
-        c = hslToHex(hue, 100, 75); // light color
+        c = hslToHtml(hue, 100, 75); // light color
         colorPalette.push(c);
     }
+
+    /*
+    // HSL invert B
+    for (let i = colors; i > 0; i--) {
+        const hue = (i * (360 / colors));
+        let c = hslToHtml(hue, 100, 25); // dark color
+        colorPalette.push(c);
+        c = hslToHtml(hue, 100, 50); // base color
+        colorPalette.push(c);
+        c = hslToHtml(hue, 100, 75); // light color
+        colorPalette.push(c);
+    }
+        */
+
+/*
+    // WaveLength A
+    for (let i = 0; i <= (colors-1); i++) {
+        const wave = 380 + (i * ((645 - 380) / (colors-1)));
+        let rgb = nmToRgb(wave);
+        let hsl = rgbToHsl(rgb);
+
+        console.debug(hsl);
+
+        let html = hslToHtml(hsl[0] * 360, 100, 25);
+        colorPalette.push(html);
+        html = hslToHtml(hsl[0] * 360, 100, 50);
+        colorPalette.push(html);
+        html = hslToHtml(hsl[0] * 360, 100, 75);
+        colorPalette.push(html);
+    }
+        */
 }
 
 function initColorButtons() {
@@ -278,8 +321,10 @@ function onColorPipetteClickEvent() {
 
     if (pipetteMode) {
         colorPipetteElem.classList.add("enabled");
+        outputCanvas.classList.add("pipette");
     } else {
         colorPipetteElem.classList.remove("enabled");
+        outputCanvas.classList.remove("pipette");
     }
 }
 
@@ -296,10 +341,10 @@ function initBackgroundColor() {
     const root = document.querySelector(':root');
 
     const hue = Math.floor(Math.random() * 360);
-    root.style.setProperty('--bg-color-1', hslToHex(hue, 100, 70));
+    root.style.setProperty('--bg-color-1', hslToHtml(hue, 100, 70));
 
     const hue2 = Math.floor(Math.random() * 360);
-    root.style.setProperty('--bg-color-2', hslToHex(hue2, 100, 70));
+    root.style.setProperty('--bg-color-2', hslToHtml(hue2, 100, 70));
 
     const rotation = Math.floor(Math.random() * 180);
     root.style.setProperty('--bg-angle', `${rotation}deg`);
@@ -361,6 +406,10 @@ function zoomOut() {
     currentZoom = clamp(currentZoom, 1, Math.floor(6000 / canvasWidth));
 
     resizeCanvas(currentZoom);
+}
+
+function closeInstruction() {
+    instructionElem.style.display = "none";
 }
 
 function savePng() {
@@ -440,17 +489,6 @@ function resizeCanvas(scale) {
 
 const clamp = (x, min, max) => Math.max(Math.min(x, max), min);
 
-function hslToHex(h, s, l) {
-    l /= 100;
-    const a = s * Math.min(l, 1 - l) / 100;
-    const f = n => {
-        const k = (n + h / 30) % 12;
-        const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
-        return Math.round(255 * color).toString(16).padStart(2, '0');   // convert to Hex and prefix "0" if needed
-    };
-    return `#${f(0)}${f(8)}${f(4)}`;
-}
-
 function isValidDraw(x, y, color) {
     // get current color on canvas
     const canvasPixelColor = getCanvasPixelColor(x, y);
@@ -470,16 +508,110 @@ function isValidDraw(x, y, color) {
 function getCanvasPixelColor(x, y) {
     // get current color on canvas
     const targetPixelData = dataContext.getImageData(x, y, 1, 1).data;
-    const targetPixelColor = imageDataToRGB(targetPixelData);
+    const targetPixelColor = rgbToHtml(targetPixelData);
     return targetPixelColor;
 }
 
-function imageDataToRGB(data) {
-    const r = data[0];
-    const g = data[1];
-    const b = data[2];
+function hslToHtml(h, s, l) {
+    l /= 100;
+    const a = s * Math.min(l, 1 - l) / 100;
+    const f = n => {
+        const k = (n + h / 30) % 12;
+        const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
+        return Math.round(255 * color).toString(16).padStart(2, '0');   // convert to Hex and prefix "0" if needed
+    };
+    return `#${f(0)}${f(8)}${f(4)}`;
+}
 
-    const rgb = "#" + ("000000" + (((r << 16) | (g << 8) | b).toString(16))).slice(-6);
+function rgbToHtml(rgb) {
+    const r = rgb[0];
+    const g = rgb[1];
+    const b = rgb[2];
 
-    return rgb;
+    const html = "#" + ("000000" + (((r << 16) | (g << 8) | b).toString(16))).slice(-6);
+
+    return html;
+}
+
+function rgbToHsl(rgb) {
+    let r = rgb[0];
+    let g = rgb[1];
+    let b = rgb[2];
+
+    r /= 255, g /= 255, b /= 255;
+
+    var max = Math.max(r, g, b), min = Math.min(r, g, b);
+    var h, s, l = (max + min) / 2;
+
+    if (max == min) {
+        h = s = 0; // achromatic
+    } else {
+        var d = max - min;
+        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+
+        switch (max) {
+            case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+            case g: h = (b - r) / d + 2; break;
+            case b: h = (r - g) / d + 4; break;
+        }
+
+        h /= 6;
+    }
+
+    return [h, s, l];
+}
+
+function nmToRgb(wavelength) {
+    var Gamma = 0.80,
+        IntensityMax = 255,
+        factor, red, green, blue;
+    if ((wavelength >= 380) && (wavelength < 440)) {
+        red = -(wavelength - 440) / (440 - 380);
+        green = 0.0;
+        blue = 1.0;
+    } else if ((wavelength >= 440) && (wavelength < 490)) {
+        red = 0.0;
+        green = (wavelength - 440) / (490 - 440);
+        blue = 1.0;
+    } else if ((wavelength >= 490) && (wavelength < 510)) {
+        red = 0.0;
+        green = 1.0;
+        blue = -(wavelength - 510) / (510 - 490);
+    } else if ((wavelength >= 510) && (wavelength < 580)) {
+        red = (wavelength - 510) / (580 - 510);
+        green = 1.0;
+        blue = 0.0;
+    } else if ((wavelength >= 580) && (wavelength < 645)) {
+        red = 1.0;
+        green = -(wavelength - 645) / (645 - 580);
+        blue = 0.0;
+    } else if ((wavelength >= 645) && (wavelength < 781)) {
+        red = 1.0;
+        green = 0.0;
+        blue = 0.0;
+    } else {
+        red = 0.0;
+        green = 0.0;
+        blue = 0.0;
+    };
+    // Let the intensity fall off near the vision limits
+    if ((wavelength >= 380) && (wavelength < 420)) {
+        factor = 0.3 + 0.7 * (wavelength - 380) / (420 - 380);
+    } else if ((wavelength >= 420) && (wavelength < 701)) {
+        factor = 1.0;
+    } else if ((wavelength >= 701) && (wavelength < 781)) {
+        factor = 0.3 + 0.7 * (780 - wavelength) / (780 - 700);
+    } else {
+        factor = 0.0;
+    };
+    if (red !== 0) {
+        red = Math.round(IntensityMax * Math.pow(red * factor, Gamma));
+    }
+    if (green !== 0) {
+        green = Math.round(IntensityMax * Math.pow(green * factor, Gamma));
+    }
+    if (blue !== 0) {
+        blue = Math.round(IntensityMax * Math.pow(blue * factor, Gamma));
+    }
+    return [red, green, blue];
 }
