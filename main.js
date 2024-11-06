@@ -149,16 +149,33 @@ function initOutputCanvas() {
     }, false);
 
     document.addEventListener('keydown', e => {
-        // space bar pressed
         if (e.code === 'Space') {
             e.preventDefault();
 
+            // space bar => quick pipette
             if (mousePos.x != -1 && mousePos.y != -1) {
                 const canvasPixelColor = getCanvasPixelColor(mousePos.x, mousePos.y);
                 setCurrentColor(canvasPixelColor, colorPickerElem);
                 colorPickerElem.value = canvasPixelColor;
             }
+        } else if ((e.code === 'Numpad0' || e.code === 'Digit0') && e.ctrlKey) {
+            e.preventDefault();
+
+            // CTRL+0 => reset zoom
+            resizeCanvas(initialZoom);
+        } else if ((e.code === 'NumpadAdd' || e.code === 'Equal') && e.ctrlKey) {
+            e.preventDefault();
+
+            // CTRL+'+' => zoom in
+            zoomIn();
+        } else if ((e.code === 'NumpadSubtract' || e.code === 'Digit6') && e.ctrlKey) {
+            e.preventDefault();
+
+            // CTRL+'-' => zoom out
+            zoomOut();
         }
+
+        // console.debug(e.code + " : " + e.key);
     });
 
     // update position & drawnBy values
@@ -232,38 +249,13 @@ function initColorPalette() {
 
     const colors = 12;
 
-    // HSL
+    // WaveLength color
     for (let i = 0; i < colors; i++) {
-        const hue = (i * (360 / colors));
-        let c = hslToHtml(hue, 100, 25); // dark color
-        colorPalette.push(c);
-        c = hslToHtml(hue, 100, 50); // base color
-        colorPalette.push(c);
-        c = hslToHtml(hue, 100, 75); // light color
-        colorPalette.push(c);
-    }
-
-    /*
-    // HSL invert B
-    for (let i = colors; i > 0; i--) {
-        const hue = (i * (360 / colors));
-        let c = hslToHtml(hue, 100, 25); // dark color
-        colorPalette.push(c);
-        c = hslToHtml(hue, 100, 50); // base color
-        colorPalette.push(c);
-        c = hslToHtml(hue, 100, 75); // light color
-        colorPalette.push(c);
-    }
-        */
-
-/*
-    // WaveLength A
-    for (let i = 0; i <= (colors-1); i++) {
-        const wave = 380 + (i * ((645 - 380) / (colors-1)));
+        const minWave = 400;
+        const maxWave = 645;
+        const wave = minWave + (i * ((maxWave - minWave) / (colors - 1)));
         let rgb = nmToRgb(wave);
         let hsl = rgbToHsl(rgb);
-
-        console.debug(hsl);
 
         let html = hslToHtml(hsl[0] * 360, 100, 25);
         colorPalette.push(html);
@@ -272,7 +264,6 @@ function initColorPalette() {
         html = hslToHtml(hsl[0] * 360, 100, 75);
         colorPalette.push(html);
     }
-        */
 }
 
 function initColorButtons() {
