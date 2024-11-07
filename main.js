@@ -5,7 +5,7 @@ const canvasHeight = 100;
 const canvasWidth = Math.floor(canvasHeight * (29.7 / 21.0)); // A4 ratio
 const defaultCanvasColor = "#FFFFFF";
 
-const initialZoom = 8;
+const initialZoom = 7;
 
 const exportPixelSize = 8;
 // END SETTINGS
@@ -162,7 +162,7 @@ function initOutputCanvas() {
             e.preventDefault();
 
             // CTRL+0 => reset zoom
-            resizeCanvas(initialZoom);
+            resetZoom();
         } else if ((e.code === 'NumpadAdd' || e.code === 'Equal') && e.ctrlKey) {
             e.preventDefault();
 
@@ -249,6 +249,7 @@ function initColorPalette() {
 
     const colors = 12;
 
+    // if needed: https://colorjs.io
     // WaveLength color
     for (let i = 0; i < colors; i++) {
         const minWave = 400;
@@ -382,7 +383,7 @@ function renderOutputCanvas() {
 }
 
 function zoomIn() {
-    currentZoom++;
+    currentZoom *= 1.2;
 
     // https://developer.mozilla.org/en-US/docs/Web/HTML/Element/canvas#maximum_canvas_size
     // maximum canvas size of 6000 to avoid any unexpected behaviour
@@ -392,9 +393,15 @@ function zoomIn() {
 }
 
 function zoomOut() {
-    currentZoom--;
+    currentZoom *= 0.8;
 
     currentZoom = clamp(currentZoom, 1, Math.floor(6000 / canvasWidth));
+
+    resizeCanvas(currentZoom);
+}
+
+function resetZoom() {
+    currentZoom = initialZoom;
 
     resizeCanvas(currentZoom);
 }
@@ -473,9 +480,20 @@ function getLocalMousePosition(e) {
 
 // UTILS
 function resizeCanvas(scale) {
+
+    // save scroll percent
+    let percentWidth = document.documentElement.scrollLeft / (document.documentElement.scrollWidth - document.documentElement.clientWidth);
+    let percentHeight = document.documentElement.scrollTop / (document.documentElement.scrollHeight - document.documentElement.clientHeight);
+
+    // recompute canvas size
     outputCanvas.width = canvasWidth * scale;
     outputCanvas.height = canvasHeight * scale;
+
+    // update render
     renderOutputCanvas();
+
+    // restore scroll percent
+    window.scrollTo((document.documentElement.scrollWidth - document.documentElement.clientWidth) * percentWidth, (document.documentElement.scrollHeight - document.documentElement.clientHeight) * percentHeight);
 }
 
 const clamp = (x, min, max) => Math.max(Math.min(x, max), min);
