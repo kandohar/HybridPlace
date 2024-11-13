@@ -40,6 +40,7 @@ const zoomInElem = document.getElementById("zoomin");
 const zoomOutElem = document.getElementById("zoomout");
 const saveElem = document.getElementById("save");
 const saveLinkElem = document.getElementById("saveLink");
+const changeBgElem = document.getElementById("changeBg");
 const positionElem = document.getElementById("position");
 const drawnByValueElem = document.getElementById("drawnByValue");
 const usernameValueElem = document.getElementById("usernameValue");
@@ -232,6 +233,7 @@ function initToolsButtons() {
     zoomInElem.onclick = _ => zoomIn();
     zoomOutElem.onclick = _ => zoomOut();
     saveElem.onclick = _ => savePng();
+    changeBgElem.onclick = _ => initBackgroundColor();
 
     instructionCloseBtnElem.onclick = _ => closeInstruction();
 }
@@ -333,10 +335,10 @@ function initBackgroundColor() {
     const root = document.querySelector(':root');
 
     const hue = Math.floor(Math.random() * 360);
-    root.style.setProperty('--bg-color-1', hslToHtml(hue, 100, 70));
+    root.style.setProperty('--bg-color-1', hslToHtml(hue, 100, 75));
 
     const hue2 = Math.floor(Math.random() * 360);
-    root.style.setProperty('--bg-color-2', hslToHtml(hue2, 100, 70));
+    root.style.setProperty('--bg-color-2', hslToHtml(hue2, 100, 75));
 
     const rotation = Math.floor(Math.random() * 180);
     root.style.setProperty('--bg-angle', `${rotation}deg`);

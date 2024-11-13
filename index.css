@@ -85,7 +85,6 @@ button {
   width: 103px;
   height: 103px;
   margin: 1px;
-  margin-top: 5px;
   border: 2px solid rgba(255, 255, 255, 0.4);
   border-radius: 10px;
   padding: 0;
@@ -176,7 +175,8 @@ button {
   position: fixed;
   bottom: 10px;
   right: 10px;
-  padding: 3px;
+  padding: 6px;
+  padding-right: 24px;
 
   color: var(--text-color);
   background: var(--text-bg);
@@ -190,8 +190,8 @@ button {
 
 #instructionCloseBtn {
   position: absolute;
-  top: calc(-1em - 9px);
-  right: 0px;
+  top: 2px;
+  right: 2px;
 }
 
 /* LOADER */
