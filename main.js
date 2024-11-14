@@ -291,6 +291,7 @@ function initColorButtons() {
     colorPickerElem.type = "color";
     colorPickerElem.name = "colorPicker";
     colorPickerElem.value = "#000000";
+    colorPickerElem.title = "ColorPicker";
     colorPickerElem.onclick = _ => setCurrentColor(colorPickerElem.value, colorPickerElem);
     colorPickerElem.addEventListener("input", onColorPickerInputEvent, false);
     colorsElem.appendChild(colorPickerElem);
@@ -298,6 +299,7 @@ function initColorButtons() {
     // Add ColorPipette
     colorPipetteElem = document.createElement('button');
     colorPipetteElem.id = "colorPipette";
+    colorPipetteElem.title = "Pipette";
     colorPipetteElem.onclick = onColorPipetteClickEvent;
     colorsElem.appendChild(colorPipetteElem);
 
