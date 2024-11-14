@@ -48,6 +48,7 @@ const usernameResetElem = document.getElementById("usernameReset");
 const instructionElem = document.getElementById("instruction");
 const instructionCloseBtnElem = document.getElementById("instructionCloseBtn");
 
+var customColorElem;
 var colorPickerElem;
 var colorPipetteElem;
 
@@ -123,8 +124,9 @@ function initOutputCanvas() {
     outputCanvas.onclick = e => {
         if (pipetteMode) {
             const canvasPixelColor = getCanvasPixelColor(mousePos.x, mousePos.y);
-            setCurrentColor(canvasPixelColor, colorPickerElem);
+            setCurrentColor(canvasPixelColor, customColorElem);
             colorPickerElem.value = canvasPixelColor;
+            customColorElem.style.backgroundColor = canvasPixelColor;
 
             onColorPipetteClickEvent();
         } else {
@@ -156,8 +158,9 @@ function initOutputCanvas() {
             // space bar => quick pipette
             if (mousePos.x != -1 && mousePos.y != -1) {
                 const canvasPixelColor = getCanvasPixelColor(mousePos.x, mousePos.y);
-                setCurrentColor(canvasPixelColor, colorPickerElem);
+                setCurrentColor(canvasPixelColor, customColorElem);
                 colorPickerElem.value = canvasPixelColor;
+                customColorElem.style.backgroundColor = canvasPixelColor;
             }
         } else if ((e.code === 'Numpad0' || e.code === 'Digit0') && e.ctrlKey) {
             e.preventDefault();
@@ -276,6 +279,8 @@ function initColorButtons() {
     for (let i in colorPalette) {
         const color = colorPalette[i];
         const colorButton = document.createElement('div');
+        colorButton.title = color;
+        colorButton.classList.add("color");
         colorButton.style.backgroundColor = color;
         colorButton.onclick = _ => {
             setCurrentColor(color, colorButton);
@@ -285,20 +290,32 @@ function initColorButtons() {
         colorButtons.push(colorButton);
     }
 
+    // Add custom color
+    customColorElem = document.createElement('div');
+    customColorElem.id = "customColor";
+    customColorElem.classList.add("color");
+    customColorElem.style.backgroundColor = "#000000";
+    customColorElem.onclick = _ => {
+        setCurrentColor(colorPickerElem.value, customColorElem);
+    };
+    colorsElem.appendChild(customColorElem);
+
     // Add ColorPicker
     colorPickerElem = document.createElement('input');
     colorPickerElem.id = "colorPicker";
+    colorPickerElem.classList.add("color");
     colorPickerElem.type = "color";
     colorPickerElem.name = "colorPicker";
     colorPickerElem.value = "#000000";
     colorPickerElem.title = "ColorPicker";
-    colorPickerElem.onclick = _ => setCurrentColor(colorPickerElem.value, colorPickerElem);
+    colorPickerElem.onclick = _ => setCurrentColor(colorPickerElem.value, customColorElem);
     colorPickerElem.addEventListener("input", onColorPickerInputEvent, false);
     colorsElem.appendChild(colorPickerElem);
 
     // Add ColorPipette
     colorPipetteElem = document.createElement('button');
     colorPipetteElem.id = "colorPipette";
+    colorPipetteElem.classList.add("color");
     colorPipetteElem.title = "Pipette";
     colorPipetteElem.onclick = onColorPipetteClickEvent;
     colorsElem.appendChild(colorPipetteElem);
@@ -308,8 +325,9 @@ function initColorButtons() {
 }
 
 function onColorPickerInputEvent(event) {
-    setCurrentColor(event.target.value, colorPickerElem);
+    setCurrentColor(event.target.value, customColorElem);
     colorPickerElem.value = event.target.value;
+    customColorElem.style.backgroundColor = event.target.value;
 }
 
 function onColorPipetteClickEvent() {
@@ -328,6 +346,7 @@ function setCurrentColor(color, elem) {
     currentColor = color;
 
     colorButtons.forEach(cb => cb.classList.remove("enabled"));
+    customColorElem.classList.remove("enabled");
     colorPickerElem.classList.remove("enabled");
 
     elem.classList.add("enabled");

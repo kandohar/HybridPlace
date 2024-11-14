@@ -59,7 +59,7 @@ button {
   background-color: var(--text-bg);
 }
 
-#colors>div {
+.color {
   display: block;
   float: left;
   width: 33px;
@@ -71,48 +71,41 @@ button {
   cursor: pointer;
 }
 
-#colors>div.enabled {
+.enabled {
   border: 4px white inset;
+}
+
+#customColor {
+  width: 103px;
 }
 
 #colorPicker {
+  width: 50px;
+
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
+
   background-color: transparent;
-  display: block;
-  float: left;
-  width: 103px;
-  height: 103px;
-  margin: 1px;
-  border: 2px solid rgba(255, 255, 255, 0.4);
-  border-radius: 10px;
-  padding: 0;
-  box-sizing: border-box;
-  cursor: pointer;
+  background: url("resources/colorPicker.png") no-repeat;
+  background-position: center;
+  background-size: contain;
 }
 
-#colorPicker.enabled {
-  border: 4px white inset;
+input[type="color" i]#colorPicker::-webkit-color-swatch,
+input[type="color" i]#colorPicker::-moz-color-swatch {
+  display: none;
 }
 
 #colorPipette {
-  display: block;
-  float: left;
-  width: 103px;
-  height: 34px;
-  margin: 1px;
-  border: 2px solid rgba(255, 255, 255, 0.4);
-  border-radius: 10px;
-  box-sizing: border-box;
-  cursor: pointer;
+  width: 50px;
+
   background: url("resources/pipette.png") no-repeat;
   background-position: center;
   background-size: contain;
 }
 
 #colorPipette.enabled {
-  border: 4px white outset;
   background-color: black;
 }
 

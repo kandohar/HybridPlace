@@ -20,17 +20,17 @@
   <div id="loaded">
     <canvas id="canvas"></canvas>
 
-    <div id="username"><span id="usernameValue">anonymous</span><button id="usernameReset" title="reset username">x</button></div>
+    <div id="username"><span id="usernameValue">anonymous</span><button id="usernameReset" title="Rename">x</button></div>
 
     <div id='colors'></div>
 
     <div id='tools'>
-      <div id='zoomin' style="cursor: zoom-in;" title="zoom in"><img src='resources/zoomIn.png'></div>
-      <div id='zoomout' style="cursor: zoom-out;" title="zoom out"><img src='resources/zoomOut.png'></div>
+      <div id='zoomin' style="cursor: zoom-in;" title="Zoom in"><img src='resources/zoomIn.png'></div>
+      <div id='zoomout' style="cursor: zoom-out;" title="Zoom out"><img src='resources/zoomOut.png'></div>
       <div class="spacer"></div>
-      <div id='save' style="cursor: pointer;" title="export png"><img src="resources/save.png"></div>
+      <div id='save' style="cursor: pointer;" title="Export png"><img src="resources/save.png"></div>
       <a style="display: none;" id="saveLink"></a>
-      <div id='changeBg' style="cursor: pointer;" title="change background color"><img src="resources/changeBg.png"></div>
+      <div id='changeBg' style="cursor: pointer;" title="Change background color"><img src="resources/changeBg.png"></div>
     </div>
 
     <div id='position'>(-1, -1)</div>
@@ -38,11 +38,12 @@
     <div id='drawnBy'>Draw by: <span id="drawnByValue"></span></div>
 
     <div id='instruction'>
-      <button id='instructionCloseBtn' title="close panel">x</button>
-      Select color from palette, use the color picker, or the pipette tool (or space bar to copy pixel under cursor)<br>
-      Left-click to place a pixel of the selected color, Right-click to place a white pixel<br>
-      Zoom using top-right corner buttons (or CTRL+mousewheel), move using arrow keys (or middle-click+drag)<br>
-      Deactivate any dark theme browser extension to get correct colors<br>
+      <button id='instructionCloseBtn' title="Close panel">x</button>
+      Select color: click on color from predefined palette, use the color picker, or the pipette (space bar to copy pixel color under cursor)<br>
+      Place pixel: Left-Click to place a pixel of the selected color, Right-Click to place a white pixel<br>
+      Zoom: Top-right corner buttons or CTRL+mousewheel<br>
+      Move: Arrow keys or Middle-Click+drag<br>
+      <br>
       To see previous years canvas: <a href="history.html">History</a>
     </div>
 
