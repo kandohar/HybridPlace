@@ -117,10 +117,10 @@ export function isSnapshotOld(uploadSnapshotCallback) {
 
         const difference = Date.now() - values["lastUploadedSnapshotTime"]; // in ms
         if (Math.floor(difference / 3600000) >= threshold && values["lastPlacedPixelTime"] > values["lastUploadedSnapshotTime"]) {
-          //console.debug("try upload snapshot");
+          console.debug("try upload snapshot");
           uploadSnapshotCallback();
         } else {
-          //console.debug(`snapshot not needed : ${(difference / 3600000).toFixed(2)} < ${threshold}`);
+          console.debug(`snapshot not needed : ${(difference / 3600000).toFixed(2)} < ${threshold}`);
         }
       }
     } else {
@@ -142,6 +142,7 @@ export function uploadImage(image) {
   }
 
   uploadBytes(storageRef, image, metadata).then((snapshot) => {
+    console.debug("snapshot uploaded successfully");
     // set logs/lastUploadedSnapshotTime to Date.now
     update(ref_db(db, 'logs'), {
       lastUploadedSnapshotTime: Date.now()
