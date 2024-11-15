@@ -92,8 +92,10 @@ button {
   background-size: contain;
 }
 
-input[type="color" i]#colorPicker::-webkit-color-swatch,
 input[type="color" i]#colorPicker::-moz-color-swatch {
+  display: none;
+}
+input[type="color"]::-webkit-color-swatch-wrapper {
   display: none;
 }
 
