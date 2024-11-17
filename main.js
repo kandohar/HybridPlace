@@ -1,11 +1,11 @@
 import { drawServerTiles, writeServerTile, incConnectionCount, uploadImage, isSnapshotOld } from "./firebase.js";
 
 // BEGIN SETTINGS
-const canvasHeight = 100;
+const canvasHeight = 150;
 const canvasWidth = Math.floor(canvasHeight * (29.7 / 21.0)); // A4 ratio
 const defaultCanvasColor = "#FFFFFF";
 
-const initialZoom = 7;
+const initialZoom = 5;
 
 const exportPixelSize = 8;
 // END SETTINGS
@@ -503,7 +503,6 @@ function getLocalMousePosition(e) {
 
 // UTILS
 function resizeCanvas(scale) {
-
     // save scroll percent
     let percentWidth = document.documentElement.scrollLeft / (document.documentElement.scrollWidth - document.documentElement.clientWidth);
     let percentHeight = document.documentElement.scrollTop / (document.documentElement.scrollHeight - document.documentElement.clientHeight);
