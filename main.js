@@ -1,11 +1,11 @@
 import { drawServerTiles, writeServerTile, incConnectionCount, uploadImage, isSnapshotOld } from "./firebase.js";
 
 // BEGIN SETTINGS
-const canvasHeight = 260;
+const canvasHeight = 340;
 const canvasWidth = Math.floor(canvasHeight * (29.7 / 21.0)); // A4 ratio
 const defaultCanvasColor = "#FFFFFF";
 
-const initialZoom = 3;
+const initialZoom = 2;
 
 const exportPixelSize = 8;
 // END SETTINGS
