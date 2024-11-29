@@ -113,7 +113,7 @@ export function isSnapshotOld(uploadSnapshotCallback) {
         // console.debug(Math.floor(difference / 60000)); // minutes
         // console.debug(Math.floor(difference / 1000)); // seconds
 
-        const threshold = 4;
+        const threshold = 3;
 
         const difference = Date.now() - values["lastUploadedSnapshotTime"]; // in ms
         if (Math.floor(difference / 3600000) >= threshold && values["lastPlacedPixelTime"] > values["lastUploadedSnapshotTime"]) {
