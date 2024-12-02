@@ -66,7 +66,7 @@ document.getElementById("loader").style.display = 'none';
 document.getElementById("loaded").style.display = 'block';
 
 // wait for data to load and try upload snapshot
-setTimeout(tryUploadSnapshot, 1000);
+setTimeout(tryUploadSnapshot, 2000);
 
 // INITS
 function initUser() {
