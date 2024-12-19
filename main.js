@@ -177,6 +177,11 @@ function initOutputCanvas() {
 
             // CTRL+'-' => zoom out
             zoomOut();
+        } else if(e.code === 'KeyU') {
+            e.preventDefault();
+
+            console.log("force upload snapshot");
+            uploadPng();
         }
 
         // console.debug(e.code + " : " + e.key);
