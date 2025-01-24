@@ -177,7 +177,7 @@ function initOutputCanvas() {
 
             // CTRL+'-' => zoom out
             zoomOut();
-        } else if(e.code === 'KeyU') {
+        } else if (e.code === 'KeyU') {
             e.preventDefault();
 
             console.log("force upload snapshot");

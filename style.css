@@ -1,0 +1,319 @@
+:root {
+	/* https://www.canva.com/colors/color-wheel/ */
+	--bg-color-1: #DE5421;
+	--bg-color-2: #21ABDE;
+	--bg-angle: 160deg;
+
+	--bloom-color: white;
+
+	--text-color: white;
+	--text-bg: rgba(0, 0, 0, 0.5);
+}
+
+body,
+html {
+	width: 100%;
+	height: 100%;
+	padding: 0;
+	margin: 0;
+	box-sizing: border-box;
+	font-family: monospace;
+}
+
+* {
+	box-sizing: inherit;
+}
+
+button {
+	color: var(--text-color);
+	background-color: var(--text-bg);
+	cursor: pointer;
+}
+
+/* USERNAME */
+
+#username {
+	position: fixed;
+	top: 30px;
+	left: 30px;
+	padding: 3px;
+	user-select: none;
+
+	color: var(--text-color);
+	background: var(--text-bg);
+}
+
+#usernameReset {
+	margin-left: 5px;
+}
+
+/* COLORS */
+
+#colors {
+	position: fixed;
+	top: 70px;
+	left: 30px;
+
+	width: 105px;
+
+	background-color: var(--text-bg);
+}
+
+.color {
+	display: block;
+	float: left;
+	width: 33px;
+	height: 33px;
+	margin: 1px;
+	border: 2px solid rgba(255, 255, 255, 0.4);
+	border-radius: 10px;
+	box-sizing: border-box;
+	cursor: pointer;
+}
+
+.enabled {
+	border: 4px white inset;
+}
+
+#customColor {
+	width: 103px;
+}
+
+#colorPicker {
+	width: 50px;
+
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	appearance: none;
+
+	background-color: transparent;
+	background: url("resources/colorPicker.png") no-repeat;
+	background-position: center;
+	background-size: contain;
+}
+
+input[type="color" i]#colorPicker::-moz-color-swatch {
+	display: none;
+}
+
+input[type="color"]::-webkit-color-swatch-wrapper {
+	display: none;
+}
+
+#colorPipette {
+	width: 50px;
+
+	background: url("resources/pipette.png") no-repeat;
+	background-position: center;
+	background-size: contain;
+}
+
+#colorPipette.enabled {
+	background-color: black;
+}
+
+/* TOOLS */
+
+#tools {
+	position: fixed;
+	top: 30px;
+	right: 30px;
+
+	background-color: var(--text-bg);
+}
+
+#tools>div {
+	display: block;
+	width: 50px;
+	height: 50px;
+	margin-bottom: 4px;
+	background: transparent;
+}
+
+#tools>div.spacer {
+	height: 20px;
+}
+
+#tools img {
+	width: 100%;
+	height: 100%
+}
+
+/* POSITION */
+
+#position {
+	position: fixed;
+	bottom: 30px;
+	left: 30px;
+	padding: 3px;
+	user-select: none;
+
+	color: var(--text-color);
+	background: var(--text-bg);
+}
+
+/* DRAWN BY */
+
+#drawnBy {
+	position: fixed;
+	bottom: 30px;
+	left: 120px;
+	padding: 3px;
+	user-select: none;
+
+	color: var(--text-color);
+	background: var(--text-bg);
+}
+
+/* INSTRUCTION */
+
+#instruction {
+	position: fixed;
+	bottom: 10px;
+	right: 10px;
+	padding: 6px;
+	padding-right: 24px;
+
+	color: var(--text-color);
+	background: var(--text-bg);
+
+	text-align: left;
+}
+
+#instruction>a {
+	color: white;
+}
+
+#instructionCloseBtn {
+	position: absolute;
+	top: 2px;
+	right: 2px;
+}
+
+/* LOADER */
+
+#loader {
+	position: fixed;
+	top: 45%;
+	left: 45%;
+}
+
+#spinner {
+	border-top: 16px solid blue;
+	border-right: 16px solid green;
+	border-bottom: 16px solid red;
+	border-left: 16px solid yellow;
+	border-radius: 50%;
+	width: 120px;
+	height: 120px;
+	animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+	0% {
+		transform: rotate(0deg);
+	}
+
+	100% {
+		transform: rotate(360deg);
+	}
+}
+
+/* LOADED */
+
+#loaded {
+	display: none;
+	min-width: 100%;
+	width: fit-content;
+	min-height: 100%;
+	height: fit-content;
+
+	/* fallback for old browsers */
+	background: var(--bg-color-1);
+	/* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+	background: linear-gradient(var(--bg-angle), var(--bg-color-1), var(--bg-color-2));
+	/* Chrome 10-25, Safari 5.1-6 */
+	background: -webkit-linear-gradient(var(--bg-angle), var(--bg-color-1), var(--bg-color-2));
+
+	text-align: center;
+}
+
+
+#canvas {
+	cursor: crosshair;
+	box-shadow: 0px 0px 40px 15px var(--bloom-color);
+	margin-top: 30px;
+	margin-bottom: 130px;
+	margin-left: 150px;
+	margin-right: 100px;
+}
+
+#canvas.pipette {
+	cursor: url(resources/pipetteCursor.png), auto;
+}
+
+/* ERROR CONSOLE */
+#errorConsole {
+	display: none;
+
+	position: fixed;
+
+	left: 50%;
+	top: 10%;
+	transform: translate(-50%, 0%);
+
+	width: 60%;
+	height: auto;
+	min-height: 10%;
+
+	padding: 10px;
+
+	color: var(--text-color);
+	background: var(--text-bg);
+}
+
+/* HISTORY */
+#static-loaded {
+	width: 100%;
+	height: auto;
+	box-sizing: border-box;
+
+	/* fallback for old browsers */
+	background: var(--bg-color-1);
+	/* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+	background: linear-gradient(var(--bg-angle), var(--bg-color-1), var(--bg-color-2));
+	/* Chrome 10-25, Safari 5.1-6 */
+	background: -webkit-linear-gradient(var(--bg-angle), var(--bg-color-1), var(--bg-color-2));
+
+	background-attachment: fixed;
+
+	text-align: center;
+}
+
+#static-title {
+	margin: 0;
+	padding: 0;
+	padding-top: 20px;
+}
+
+#static-subtitle {
+	margin: 0;
+	padding: 0;
+}
+
+.static-year-container {
+	width: 60%;
+	margin: auto;
+	padding-bottom: 100px;
+}
+
+.static-year-title {
+	text-align: right;
+	padding-bottom: 15px;
+}
+
+.static-year-canvas {
+	width: 100%;
+	height: auto;
+	box-shadow: 0px 0px 40px 15px var(--bloom-color);
+}
