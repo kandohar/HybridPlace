@@ -3,13 +3,13 @@ import { getDatabase, ref as ref_db, get, set, update, child, onChildAdded, onCh
 import { getStorage, ref as ref_storage, uploadBytes } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-storage.js";
 
 const firebaseConfig = {
-	apiKey: "AIzaSyBiqo_XSSCnF2o-DzouZumawr132boghKg",
-	authDomain: "hybrid-place-2024.firebaseapp.com",
-	databaseURL: "https://hybrid-place-2024-default-rtdb.europe-west1.firebasedatabase.app",
-	projectId: "hybrid-place-2024",
-	storageBucket: "hybrid-place-2024.appspot.com",
-	messagingSenderId: "825801592342",
-	appId: "1:825801592342:web:d7b7049919eb0db177ef37"
+	apiKey: "AIzaSyDbh78cSFpYLH0vlDDd7PCwG4WyhRHbCwo",
+	authDomain: "hybrid-place-2025.firebaseapp.com",
+	databaseURL: "https://hybrid-place-2025-default-rtdb.europe-west1.firebasedatabase.app",
+	projectId: "hybrid-place-2025",
+	storageBucket: "hybrid-place-2025.firebasestorage.app",
+	messagingSenderId: "207011475473",
+	appId: "1:207011475473:web:802e52b21da14f022e41b0"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -108,6 +108,7 @@ export function isSnapshotOld(uploadSnapshotCallback) {
 	get(ref_db(db, "logs/")).then((snapshot) => {
 		if (snapshot.exists()) {
 			const values = snapshot.val();
+			// lastUploadedSnapshotTime is never created, do it manually
 			if (values.hasOwnProperty("lastUploadedSnapshotTime") && values.hasOwnProperty("lastPlacedPixelTime")) {
 				// console.debug(Math.floor(difference / 3600000)); // hours
 				// console.debug(Math.floor(difference / 60000)); // minutes

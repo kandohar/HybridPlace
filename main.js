@@ -1,11 +1,11 @@
 import { drawServerTiles, writeServerTile, incConnectionCount, uploadImage, isSnapshotOld } from "./firebase.js";
 
 // BEGIN SETTINGS
-const canvasHeight = 480;
+const canvasHeight = 100;
 const canvasWidth = Math.floor(canvasHeight * (29.7 / 21.0)); // A4 ratio
 const defaultCanvasColor = "#FFFFFF";
 
-const initialZoom = 2;
+const initialZoom = 8;
 
 const exportPixelSize = 8;
 // END SETTINGS
@@ -66,7 +66,7 @@ document.getElementById("loader").style.display = 'none';
 document.getElementById("loaded").style.display = 'block';
 
 // wait for data to load and try upload snapshot
-setTimeout(tryUploadSnapshot, 5000);
+//setTimeout(tryUploadSnapshot, 5000);
 
 // INITS
 function initUser() {
@@ -465,6 +465,8 @@ function uploadPng() {
 }
 
 function uploadPngHandler() {
+    console.log("uploadPngHandler");
+
     outputCanvas.toBlob((blob) => {
         uploadImage(blob);
     }, "image/png", 1);
