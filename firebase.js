@@ -69,6 +69,40 @@ export function writeServerTile(x, y, color, username) {
 	});
 }
 
+export function writeServerTiles(positions, color, username) {
+	// usage : writeServerTiles([{x:2, y:1}, {x:2, y:2}, {x:3, y:3}, {x:4, y:4}, {x:5, y:5}], currentColor, username);
+
+	const tiles = {};
+	positions.forEach(pos => 
+		tiles['tiles/' + 'tile_' + pos.x + "_" + pos.y] = {
+			x: pos.x,
+			y: pos.y,
+			color: color,
+			username: username,
+			date: Date.now()
+		}
+	);
+
+	update(ref_db(db), tiles)
+	.catch((error) => {
+		showError(error);
+	});
+
+	// increments click count
+	update(ref_db(db, 'stats/' + username), {
+		clicks: increment(positions.length)
+	}).catch((error => {
+		showError(error);
+	}));
+
+	// set logs/lastPlacedPixelTime to Date.now
+	update(ref_db(db, 'logs'), {
+		lastPlacedPixelTime: Date.now()
+	}).catch((error) => {
+		showError(error);
+	});
+}
+
 export function incConnectionCount(username) {
 	// increments connection count
 	update(ref_db(db, 'stats/' + username), {

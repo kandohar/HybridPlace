@@ -1,4 +1,4 @@
-import { drawServerTiles, writeServerTile, incConnectionCount, uploadImage, isSnapshotOld } from "./firebase.js";
+import { drawServerTiles, writeServerTile, writeServerTiles, incConnectionCount, uploadImage, isSnapshotOld } from "./firebase.js";
 
 // BEGIN SETTINGS
 const canvasHeight = 100;
