@@ -8,6 +8,10 @@ const defaultCanvasColor = "#ffffff";
 const initialZoom = 8;
 
 const exportPixelSize = 8;
+
+const initialFillRadius = 5;
+const minFillRadius = 2;
+const maxFillRadius = 50;
 // END SETTINGS
 
 // displayed data, resizable
@@ -28,7 +32,7 @@ let mousePos = { x: -1, y: -1 };
 
 var pipetteMode = false;
 var fillMode = false;
-var fillRadius = 10;
+var fillRadius = initialFillRadius;
 
 const cookieName = "hybrid-place-username=";
 // day * hours * minutes * seconds
@@ -53,6 +57,8 @@ const instructionCloseBtnElem = document.getElementById("instructionCloseBtn");
 var customColorElem;
 var colorPickerElem;
 var colorPipetteElem;
+var fillToolElem;
+var fillRadiusElem;
 
 // init everything
 initUser();
@@ -67,6 +73,7 @@ initBackgroundColor();
 document.getElementById("loader").style.display = 'none';
 document.getElementById("loaded").style.display = 'block';
 
+// FIXME
 // wait for data to load and try upload snapshot
 //setTimeout(tryUploadSnapshot, 5000);
 
@@ -131,14 +138,14 @@ function initOutputCanvas() {
             customColorElem.style.backgroundColor = canvasPixelColor;
 
             onColorPipetteClickEvent();
+        } else if (fillMode) {
+            if (isValidDraw(mousePos.x, mousePos.y, currentColor)) {
+                smartFill(mousePos.x, mousePos.y, currentColor, username);
+            }
         } else {
-            if (isValidDraw(mousePos.x, mousePos.y, currentColor))
-			{
-				if (fillMode)
-					fill(currentColor);
-				else
-					writeServerTile(mousePos.x, mousePos.y, currentColor, username);
-			}
+            if (isValidDraw(mousePos.x, mousePos.y, currentColor)) {
+                writeServerTile(mousePos.x, mousePos.y, currentColor, username);
+            }
         }
     };
 
@@ -149,87 +156,75 @@ function initOutputCanvas() {
         if (pipetteMode) {
             // cancel pipette
             onColorPipetteClickEvent();
+        } else if (fillMode) {
+            // cancel fill tool
+            onFillToolClickEvent();
         } else {
             // draw white pixel
-            if (isValidDraw(mousePos.x, mousePos.y, defaultCanvasColor))
-			{
-				if (fillMode)
-					fill(defaultCanvasColor);
-				else
-					writeServerTile(mousePos.x, mousePos.y, defaultCanvasColor, username);
-			}
+            if (isValidDraw(mousePos.x, mousePos.y, defaultCanvasColor)) {
+                writeServerTile(mousePos.x, mousePos.y, defaultCanvasColor, username);
+            }
         }
 
         return false;
     }, false);
-	
-	function fill(fillColor)
-	{
-		const mx = mousePos.x;
-		const my = mousePos.y;
-		var color = getCanvasPixelColor(mx, my);
-		if (color == "" || pixelDrawnByData[mx] == null || pixelDrawnByData[mx][my] == null)
-			color = "#ffffff"; // If nobody has drawn on this pixel, it is white
-		
-		var cellToPaint = [{x:mx, y:my, dist:0}], paintedCells = [];
-		
-		const arraySize = fillRadius * 2 + 1;
-		var cells = new Array(arraySize);
-		for (let i = 0; i < arraySize; i++)
-			cells[i] = new Array(arraySize).fill(9999);
-		
-		while(cellToPaint.length > 0)
-		{
-			var item = cellToPaint.pop();
-			var isAlreadyAdded = false;
-			
-			for (const cell of paintedCells)
-			{
-				if ((item.x == cell.x) && (item.y == cell.y) && (item.dist >= cell.dist))
-				{
-					isAlreadyAdded = true;
-					break;
-				}
-			}
-			if(!isAlreadyAdded)
-				paintedCells.push(item);
-			
-			const neighbors = [{x:-1, y:0}, {x:1, y:0}, {x:0, y:-1}, {x:0, y:1}];
-			for (var offset of neighbors)
-			{
-				var newCell = {x:item.x + offset.x, y:item.y + offset.y, dist:item.dist + 1};
-				var addCell = true;
-				
-				if (newCell.dist > fillRadius || newCell.x < 0 || newCell.y < 0)
-				{
-					addCell = false;
-					break;
-				}
-				
-				const cx = newCell.x - mx + fillRadius, cy = newCell.y - my + fillRadius;
-				if (cells[cx][cy] <= newCell.dist)
-				{
-					addCell = false;
-					continue;
-				}
-				
-				var newColor = getCanvasPixelColor(newCell.x, newCell.y).toLowerCase();
-				if (newColor == "" || pixelDrawnByData[newCell.x] == null || pixelDrawnByData[newCell.x][newCell.y] == null)
-					newColor = "#ffffff"; // If nobody has drawn on this pixel, it is white
-				//if ((newColor != color.toLowerCase()) && (newColor != fillColor.toLowerCase()))
-				if (newColor != color.toLowerCase())
-					addCell = false;
-				
-				if (addCell)
-				{
-					cellToPaint.push(newCell);
-					cells[cx][cy] = newCell.dist;
-				}
-			}
-		}
-		
-		writeServerTiles(paintedCells, fillColor, username);
-	}
+
+    function smartFill(mx, my, fillColor, username) {
+        let color = getCanvasPixelColor(mx, my);
+        if (color == "" || pixelDrawnByData[mx] == null || pixelDrawnByData[mx][my] == null)
+            color = "#ffffff"; // If nobody has drawn on this pixel, it is white
+
+        let cellToPaint = [{ x: mx, y: my, dist: 0 }], paintedCells = [];
+
+        const arraySize = fillRadius * 2 + 1;
+        let cells = new Array(arraySize);
+        for (let i = 0; i < arraySize; i++)
+            cells[i] = new Array(arraySize).fill(9999);
+
+        while (cellToPaint.length > 0) {
+            let item = cellToPaint.pop();
+            let isAlreadyAdded = false;
+
+            for (let cell of paintedCells) {
+                if ((item.x == cell.x) && (item.y == cell.y) && (item.dist >= cell.dist)) {
+                    isAlreadyAdded = true;
+                    break;
+                }
+            }
+            if (!isAlreadyAdded)
+                paintedCells.push(item);
+
+            let neighbors = [{ x: -1, y: 0 }, { x: 1, y: 0 }, { x: 0, y: -1 }, { x: 0, y: 1 }];
+            for (let offset of neighbors) {
+                let newCell = { x: item.x + offset.x, y: item.y + offset.y, dist: item.dist + 1 };
+                let addCell = true;
+
+                if (newCell.dist > fillRadius || newCell.x < 0 || newCell.y < 0) {
+                    addCell = false;
+                    break;
+                }
+
+                const cx = newCell.x - mx + fillRadius, cy = newCell.y - my + fillRadius;
+                if (cells[cx][cy] <= newCell.dist) {
+                    addCell = false;
+                    continue;
+                }
+
+                let newColor = getCanvasPixelColor(newCell.x, newCell.y).toLowerCase();
+                if (newColor == "" || pixelDrawnByData[newCell.x] == null || pixelDrawnByData[newCell.x][newCell.y] == null)
+                    newColor = "#ffffff"; // If nobody has drawn on this pixel, it is white
+                if (newColor != color.toLowerCase())
+                    addCell = false;
+
+                if (addCell) {
+                    cellToPaint.push(newCell);
+                    cells[cx][cy] = newCell.dist;
+                }
+            }
+        }
+
+        writeServerTiles(paintedCells, fillColor, username);
+    }
 
     document.addEventListener('keydown', e => {
         if (e.code === 'Space') {
@@ -242,17 +237,17 @@ function initOutputCanvas() {
                 colorPickerElem.value = canvasPixelColor;
                 customColorElem.style.backgroundColor = canvasPixelColor;
             }
-        } else if ((e.code === 'Numpad0' || e.code === 'Digit0') && e.ctrlKey) {
+        } else if (e.ctrlKey && (e.code === 'Numpad0' || e.code === 'Digit0')) {
             e.preventDefault();
 
             // CTRL+0 => reset zoom
             resetZoom();
-        } else if ((e.code === 'NumpadAdd' || e.code === 'Equal') && e.ctrlKey) {
+        } else if (e.ctrlKey && (e.code === 'NumpadAdd' || e.code === 'Equal')) {
             e.preventDefault();
 
             // CTRL+'+' => zoom in
             zoomIn();
-        } else if ((e.code === 'NumpadSubtract' || e.code === 'Digit6') && e.ctrlKey) {
+        } else if (e.ctrlKey && (e.code === 'NumpadSubtract' || e.code === 'Digit6')) {
             e.preventDefault();
 
             // CTRL+'-' => zoom out
@@ -261,7 +256,8 @@ function initOutputCanvas() {
             e.preventDefault();
 
             console.log("force upload snapshot");
-            uploadPng();
+            // FIXME
+            //uploadPng();
         }
 
         // console.debug(e.code + " : " + e.key);
@@ -405,8 +401,33 @@ function initColorButtons() {
     colorPipetteElem.onclick = onColorPipetteClickEvent;
     colorsElem.appendChild(colorPipetteElem);
 
+    // Add FillTool
+    fillToolElem = document.createElement('button');
+    fillToolElem.id = "fillTool";
+    fillToolElem.classList.add("color");
+    fillToolElem.title = "Smart Fill";
+    fillToolElem.onclick = onFillToolClickEvent;
+    colorsElem.appendChild(fillToolElem);
+
+    // Add FillRadius
+    fillRadiusElem = document.createElement('input');
+    fillRadiusElem.id = "fillRadius";
+    fillRadiusElem.classList.add("color");
+    fillRadiusElem.type = "number";
+    fillRadiusElem.name = "Fill Radius";
+    fillRadiusElem.value = initialFillRadius;
+    fillRadiusElem.min = minFillRadius;
+    fillRadiusElem.max = maxFillRadius;
+    fillRadiusElem.addEventListener("input", onFillRadiusInputEvent, false);
+    colorsElem.appendChild(fillRadiusElem);
+
     // select the first color by default
     colorButtons[0].onclick();
+}
+
+function onFillRadiusInputEvent(event) {
+    fillRadius = clamp(event.target.value, minFillRadius, maxFillRadius);
+    event.target.value = fillRadius;
 }
 
 function onColorPickerInputEvent(event) {
@@ -420,10 +441,21 @@ function onColorPipetteClickEvent() {
 
     if (pipetteMode) {
         colorPipetteElem.classList.add("enabled");
+        // set cursor
         outputCanvas.classList.add("pipette");
     } else {
         colorPipetteElem.classList.remove("enabled");
         outputCanvas.classList.remove("pipette");
+    }
+}
+
+function onFillToolClickEvent() {
+    fillMode = !fillMode;
+
+    if (fillMode) {
+        fillToolElem.classList.add("enabled");
+    } else {
+        fillToolElem.classList.remove("enabled");
     }
 }
 
@@ -450,7 +482,6 @@ function initBackgroundColor() {
     root.style.setProperty('--bg-angle', `${rotation}deg`);
 }
 
-// EVENTS
 function renderOutputCanvas() {
     // solution to avoid multiple render call in 1 frame
     if (requestDraw)

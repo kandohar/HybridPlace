@@ -112,6 +112,26 @@ input[type="color"]::-webkit-color-swatch-wrapper {
 	background-color: black;
 }
 
+#fillTool {
+	width: 50px;
+
+	background: url("resources/fillTool.png") no-repeat;
+	background-position: center;
+	background-size: contain;
+}
+
+#fillTool.enabled {
+	background-color: black;
+}
+
+#fillRadius {
+	width: 50px;
+
+	color: white;
+	background-color: rgba(255, 255, 255, 0);
+	padding-left: 8px;
+}
+
 /* TOOLS */
 
 #tools {

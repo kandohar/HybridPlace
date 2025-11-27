@@ -15,3 +15,6 @@ To download all snapshots: (PowerShell) `$ gcloud storage cp --recursive gs://hy
 
 Inspired by https://github.com/ConnorMulqueen/spot
 
+### Acknowledgements
+
+* Alexandre Audinot
