@@ -11,7 +11,7 @@ const exportPixelSize = 8;
 
 const initialFillRadius = 5;
 const minFillRadius = 2;
-const maxFillRadius = 50;
+const maxFillRadius = 30;
 // END SETTINGS
 
 // displayed data, resizable
@@ -174,7 +174,8 @@ function initOutputCanvas() {
         if (color == "" || pixelDrawnByData[mx] == null || pixelDrawnByData[mx][my] == null)
             color = "#ffffff"; // If nobody has drawn on this pixel, it is white
 
-        let cellToPaint = [{ x: mx, y: my, dist: 0 }], paintedCells = [];
+        let cellToPaint = [{ x: mx, y: my, dist: 0 }];
+        let paintedCells = [];
 
         const arraySize = fillRadius * 2 + 1;
         let cells = new Array(arraySize);
