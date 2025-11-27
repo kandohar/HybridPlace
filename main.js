@@ -202,7 +202,7 @@ function initOutputCanvas() {
 
                 if (newCell.dist > fillRadius || newCell.x < 0 || newCell.y < 0) {
                     addCell = false;
-                    break;
+                    continue;
                 }
 
                 const cx = newCell.x - mx + fillRadius, cy = newCell.y - my + fillRadius;
