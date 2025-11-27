@@ -3,7 +3,7 @@ import { drawServerTiles, writeServerTile, writeServerTiles, incConnectionCount,
 // BEGIN SETTINGS
 const canvasHeight = 100;
 const canvasWidth = Math.floor(canvasHeight * (29.7 / 21.0)); // A4 ratio
-const defaultCanvasColor = "#FFFFFF";
+const defaultCanvasColor = "#ffffff";
 
 const initialZoom = 8;
 
@@ -27,6 +27,8 @@ let requestDraw;
 let mousePos = { x: -1, y: -1 };
 
 var pipetteMode = false;
+var fillMode = false;
+var fillRadius = 10;
 
 const cookieName = "hybrid-place-username=";
 // day * hours * minutes * seconds
@@ -131,7 +133,12 @@ function initOutputCanvas() {
             onColorPipetteClickEvent();
         } else {
             if (isValidDraw(mousePos.x, mousePos.y, currentColor))
-                writeServerTile(mousePos.x, mousePos.y, currentColor, username);
+			{
+				if (fillMode)
+					fill(currentColor);
+				else
+					writeServerTile(mousePos.x, mousePos.y, currentColor, username);
+			}
         }
     };
 
@@ -145,11 +152,84 @@ function initOutputCanvas() {
         } else {
             // draw white pixel
             if (isValidDraw(mousePos.x, mousePos.y, defaultCanvasColor))
-                writeServerTile(mousePos.x, mousePos.y, defaultCanvasColor, username);
+			{
+				if (fillMode)
+					fill(defaultCanvasColor);
+				else
+					writeServerTile(mousePos.x, mousePos.y, defaultCanvasColor, username);
+			}
         }
 
         return false;
     }, false);
+	
+	function fill(fillColor)
+	{
+		const mx = mousePos.x;
+		const my = mousePos.y;
+		var color = getCanvasPixelColor(mx, my);
+		if (color == "" || pixelDrawnByData[mx] == null || pixelDrawnByData[mx][my] == null)
+			color = "#ffffff"; // If nobody has drawn on this pixel, it is white
+		
+		var cellToPaint = [{x:mx, y:my, dist:0}], paintedCells = [];
+		
+		const arraySize = fillRadius * 2 + 1;
+		var cells = new Array(arraySize);
+		for (let i = 0; i < arraySize; i++)
+			cells[i] = new Array(arraySize).fill(9999);
+		
+		while(cellToPaint.length > 0)
+		{
+			var item = cellToPaint.pop();
+			var isAlreadyAdded = false;
+			
+			for (const cell of paintedCells)
+			{
+				if ((item.x == cell.x) && (item.y == cell.y) && (item.dist >= cell.dist))
+				{
+					isAlreadyAdded = true;
+					break;
+				}
+			}
+			if(!isAlreadyAdded)
+				paintedCells.push(item);
+			
+			const neighbors = [{x:-1, y:0}, {x:1, y:0}, {x:0, y:-1}, {x:0, y:1}];
+			for (var offset of neighbors)
+			{
+				var newCell = {x:item.x + offset.x, y:item.y + offset.y, dist:item.dist + 1};
+				var addCell = true;
+				
+				if (newCell.dist > fillRadius || newCell.x < 0 || newCell.y < 0)
+				{
+					addCell = false;
+					break;
+				}
+				
+				const cx = newCell.x - mx + fillRadius, cy = newCell.y - my + fillRadius;
+				if (cells[cx][cy] <= newCell.dist)
+				{
+					addCell = false;
+					continue;
+				}
+				
+				var newColor = getCanvasPixelColor(newCell.x, newCell.y).toLowerCase();
+				if (newColor == "" || pixelDrawnByData[newCell.x] == null || pixelDrawnByData[newCell.x][newCell.y] == null)
+					newColor = "#ffffff"; // If nobody has drawn on this pixel, it is white
+				//if ((newColor != color.toLowerCase()) && (newColor != fillColor.toLowerCase()))
+				if (newColor != color.toLowerCase())
+					addCell = false;
+				
+				if (addCell)
+				{
+					cellToPaint.push(newCell);
+					cells[cx][cy] = newCell.dist;
+				}
+			}
+		}
+		
+		writeServerTiles(paintedCells, fillColor, username);
+	}
 
     document.addEventListener('keydown', e => {
         if (e.code === 'Space') {
