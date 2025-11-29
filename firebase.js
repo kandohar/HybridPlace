@@ -1,6 +1,8 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
 import { getDatabase, ref as ref_db, get, set, update, child, onChildAdded, onChildChanged, increment } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+/*
 import { getStorage, ref as ref_storage, uploadBytes } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-storage.js";
+*/
 
 const firebaseConfig = {
 	apiKey: "AIzaSyDbh78cSFpYLH0vlDDd7PCwG4WyhRHbCwo",
@@ -14,7 +16,9 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
+/*
 const storage = getStorage(app);
+*/
 
 const documentErrorConsole = document.getElementById("errorConsole");
 
@@ -159,13 +163,14 @@ export function isSnapshotOld(uploadSnapshotCallback) {
 				}
 			}
 		} else {
-			console.error("no data");
+			showError("no data");
 		}
 	}).catch((error) => {
 		showError(error);
 	})
 }
 
+/*
 export function uploadImage(image) {
 	// https://firebase.google.com/docs/storage/web/upload-files
 	const now = new Date();
@@ -184,6 +189,15 @@ export function uploadImage(image) {
 		}).catch((error) => {
 			showError(error);
 		});
+	}).catch((error) => {
+		showError(error);
+	});
+}
+*/
+
+export function updateLastUploadedSnapshotTime() {
+	update(ref_db(db, 'logs'), {
+		lastUploadedSnapshotTime: Date.now()
 	}).catch((error) => {
 		showError(error);
 	});

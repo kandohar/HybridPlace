@@ -1,5 +1,5 @@
-import { drawServerTiles, writeServerTile, writeServerTiles, incConnectionCount, uploadImage as uploadImageFB, isSnapshotOld } from "./firebase.js";
-import { uploadImage as uploadImageSB } from './supabase.js';
+import { drawServerTiles, writeServerTile, writeServerTiles, incConnectionCount, /*uploadImage,*/ isSnapshotOld } from "./firebase.js";
+import { uploadImage } from './supabase.js';
 
 // BEGIN SETTINGS
 const canvasHeight = 100;
@@ -74,9 +74,8 @@ initBackgroundColor();
 document.getElementById("loader").style.display = 'none';
 document.getElementById("loaded").style.display = 'block';
 
-// FIXME
 // wait for data to load and try upload snapshot
-//setTimeout(tryUploadSnapshot, 5000);
+setTimeout(tryUploadSnapshot, 5000);
 
 // INITS
 function initUser() {
@@ -580,7 +579,7 @@ function uploadPngHandler() {
     console.log("uploadPngHandler");
 
     outputCanvas.toBlob((blob) => {
-        uploadImageSB(blob);
+        uploadImage(blob);
     }, "image/png", 1);
 
     // restore zoom level
