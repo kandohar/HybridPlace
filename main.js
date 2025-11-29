@@ -1,4 +1,5 @@
-import { drawServerTiles, writeServerTile, writeServerTiles, incConnectionCount, uploadImage, isSnapshotOld } from "./firebase.js";
+import { drawServerTiles, writeServerTile, writeServerTiles, incConnectionCount, uploadImage as uploadImageFB, isSnapshotOld } from "./firebase.js";
+import { uploadImage as uploadImageSB } from './supabase.js';
 
 // BEGIN SETTINGS
 const canvasHeight = 100;
@@ -257,8 +258,7 @@ function initOutputCanvas() {
             e.preventDefault();
 
             console.log("force upload snapshot");
-            // FIXME
-            //uploadPng();
+            uploadPng();
         }
 
         // console.debug(e.code + " : " + e.key);
@@ -580,7 +580,7 @@ function uploadPngHandler() {
     console.log("uploadPngHandler");
 
     outputCanvas.toBlob((blob) => {
-        uploadImage(blob);
+        uploadImageSB(blob);
     }, "image/png", 1);
 
     // restore zoom level
