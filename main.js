@@ -6,7 +6,7 @@ const canvasHeight = 100;
 const canvasWidth = Math.floor(canvasHeight * (29.7 / 21.0)); // A4 ratio
 const defaultCanvasColor = "#ffffff";
 
-const initialZoom = 8;
+const initialZoom = 7;
 
 const exportPixelSize = 8;
 
@@ -200,7 +200,7 @@ function initOutputCanvas() {
                 let newCell = { x: item.x + offset.x, y: item.y + offset.y, dist: item.dist + 1 };
                 let addCell = true;
 
-                if (newCell.dist > fillRadius || newCell.x < 0 || newCell.y < 0) {
+                if (newCell.dist > fillRadius || newCell.x < 0 || newCell.x >= canvasWidth || newCell.y < 0  || newCell.y >= canvasHeight) {
                     addCell = false;
                     continue;
                 }
