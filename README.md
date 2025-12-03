@@ -1,6 +1,6 @@
-# Seamless Place  ![place logo](https://raw.githubusercontent.com/ConnorMulqueen/spot/master/resources/favicon.png) 
+# Seamless Place  ![place logo](https://raw.githubusercontent.com/ConnorMulqueen/spot/master/resources/favicon.png)
 
-A serverless /r/place clone using firebase free tier for Inria Seamless team  
+A serverless /r/place clone using Firebase with Realtime Database and Supabase for snapshot uploads for Inria Seamless team 
 Page: https://kandohar.github.io/HybridPlace/  
 
 Firebase 2025: https://console.firebase.google.com/u/0/project/hybrid-place-2025/overview  
