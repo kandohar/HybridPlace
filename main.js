@@ -2,11 +2,11 @@ import { drawServerTiles, writeServerTile, writeServerTiles, incConnectionCount,
 import { uploadImage } from './supabase.js';
 
 // BEGIN SETTINGS
-const canvasHeight = 140;
+const canvasHeight = 200;
 const canvasWidth = Math.floor(canvasHeight * (29.7 / 21.0)); // A4 ratio
 const defaultCanvasColor = "#ffffff";
 
-const initialZoom = 6;
+const initialZoom = 4;
 
 const exportPixelSize = 8;
 
